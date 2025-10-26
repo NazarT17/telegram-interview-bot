@@ -402,6 +402,12 @@ export async function handleAnswerSelection(
     });
 
     await ctx.answerCallbackQuery();
+
+    const keyboard = new InlineKeyboard().text(
+      "➡️ Next Question",
+      `next_test_question_${userId}`
+    );
+
     await ctx.reply(
       `⏰ TIME'S UP!\n\n` +
         `You exceeded the ${session.timeLimit}s time limit.\n\n` +
@@ -409,7 +415,8 @@ export async function handleAnswerSelection(
         `✅ CORRECT ANSWER:\n\n${
           currentQuestion.options[currentQuestion.correctOption]
         }\n` +
-        `━━━━━━━━━━━━━━━━━━`
+        `━━━━━━━━━━━━━━━━━━`,
+      { reply_markup: keyboard }
     );
   } else {
     // Check if answer is correct
@@ -430,15 +437,26 @@ export async function handleAnswerSelection(
 
     if (isCorrect) {
       const encouragement = getEncouragement(true);
+      const keyboard = new InlineKeyboard().text(
+        "➡️ Next Question",
+        `next_test_question_${userId}`
+      );
+
       await ctx.reply(
         `${encouragement} ⏱️ ${timeTaken}s\n\n` +
           `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n\n` +
           `━━━━━━━━━━━━━━━━━━\n` +
           `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
-          `━━━━━━━━━━━━━━━━━━`
+          `━━━━━━━━━━━━━━━━━━`,
+        { reply_markup: keyboard }
       );
     } else {
       const encouragement = getEncouragement(false);
+      const keyboard = new InlineKeyboard().text(
+        "➡️ Next Question",
+        `next_test_question_${userId}`
+      );
+
       await ctx.reply(
         `${encouragement} ⏱️ ${timeTaken}s\n\n` +
           `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n` +
@@ -448,10 +466,23 @@ export async function handleAnswerSelection(
           }\n\n` +
           `━━━━━━━━━━━━━━━━━━\n` +
           `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
-          `━━━━━━━━━━━━━━━━━━`
+          `━━━━━━━━━━━━━━━━━━`,
+        { reply_markup: keyboard }
       );
     }
   }
+}
+
+export async function handleNextQuestion(ctx: Context, userId: number) {
+  const session = interviewSessions.get(userId);
+  if (!session) {
+    await ctx.answerCallbackQuery({
+      text: "No active interview session!",
+    });
+    return;
+  }
+
+  await ctx.answerCallbackQuery();
 
   // Move to next question
   session.currentQuestionIndex++;

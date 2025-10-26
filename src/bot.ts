@@ -8,6 +8,7 @@ import {
   mockInterviewCommand,
   startMockInterview,
   handleAnswerSelection,
+  handleNextQuestion,
 } from "./commands/mockInterview";
 import dataService from "./services/dataService";
 
@@ -232,6 +233,13 @@ bot.callbackQuery(/^answer_(\d+)_(\d+)$/, async (ctx) => {
   const selectedOption = parseInt(ctx.match[2]);
 
   await handleAnswerSelection(ctx, questionId, selectedOption);
+});
+
+// Handle next question button in mock interviews
+bot.callbackQuery(/^next_test_question_(\d+)$/, async (ctx) => {
+  const userId = parseInt(ctx.match[1]);
+
+  await handleNextQuestion(ctx, userId);
 });
 
 bot.catch((err) => {
