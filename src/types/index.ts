@@ -2,6 +2,8 @@ export interface Question {
   id: number;
   question: string;
   answer: string;
+  options: string[]; // 3 short answer options
+  correctOption: number; // Index of correct option (0, 1, or 2)
   difficulty: "easy" | "medium" | "hard";
   tags?: string[];
 }

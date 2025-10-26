@@ -6,6 +6,12 @@
       "id": 1,
       "question": "What is the difference between functional and non-functional testing?",
       "answer": "FUNCTIONAL: Tests what the system does (features, functionality). Examples: login, checkout, search. NON-FUNCTIONAL: Tests how the system performs (performance, security, usability). Examples: load testing, security audits, accessibility.",
+      "options": [
+        "Functional tests features, non-functional tests performance",
+        "They test the same thing",
+        "Functional is automated, non-functional is manual"
+      ],
+      "correctOption": 0,
       "difficulty": "easy",
       "tags": [
         "testing-types"
@@ -15,6 +21,12 @@
       "id": 2,
       "question": "Explain the testing pyramid concept.",
       "answer": "Testing pyramid shows test distribution: BASE (most tests) - Unit tests (fast, isolated, many). MIDDLE - Integration tests (moderate speed, test interactions). TOP (fewest) - E2E tests (slow, expensive, full user flows). Principle: more lower-level tests, fewer high-level tests.",
+      "options": [
+        "Equal distribution of all test types",
+        "More unit tests at base, fewer E2E at top",
+        "Only E2E tests are needed"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": [
         "strategy",
@@ -24,7 +36,13 @@
     {
       "id": 3,
       "question": "What is test coverage and is 100% coverage a good goal?",
-      "answer": "Test coverage measures % of code executed by tests. 100% coverage \u2260 bug-free code. Problems: 1) Can test wrong things, 2) Doesn't guarantee quality assertions, 3) Expensive to maintain. Better: focus on critical paths, aim for 70-80% coverage with meaningful tests.",
+      "answer": "Test coverage measures % of code executed by tests. 100% coverage ≠ bug-free code. Problems: 1) Can test wrong things, 2) Doesn't guarantee quality assertions, 3) Expensive to maintain. Better: focus on critical paths, aim for 70-80% coverage with meaningful tests.",
+      "options": [
+        "100% coverage guarantees no bugs",
+        "100% coverage doesn't guarantee quality, aim for 70-80%",
+        "Coverage metrics are useless"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": [
         "metrics",
@@ -35,6 +53,12 @@
       "id": 4,
       "question": "What are test doubles? Name and explain the main types.",
       "answer": "Test doubles are fake objects used in testing. Types: 1) Dummy - passed but never used, 2) Stub - returns predefined data, 3) Spy - records how it was called, 4) Mock - verifies behavior/calls, 5) Fake - working implementation (simpler). Use to isolate code under test from dependencies.",
+      "options": [
+        "Backup copies of tests",
+        "Fake objects like stubs, mocks, spies",
+        "Duplicate test cases for redundancy"
+      ],
+      "correctOption": 1,
       "difficulty": "hard",
       "tags": [
         "mocking",
@@ -45,6 +69,12 @@
       "id": 5,
       "question": "What is the difference between black box and white box testing?",
       "answer": "BLACK BOX: Tests functionality without knowing internal structure. Focus on inputs/outputs. Used for integration/E2E tests. WHITE BOX: Tests internal logic, code structure. Requires code knowledge. Used for unit tests. Grey box combines both approaches.",
+      "options": [
+        "Black box tests internals, white box tests UI",
+        "Black box tests without code knowledge, white box requires it",
+        "Both require complete code access"
+      ],
+      "correctOption": 1,
       "difficulty": "easy",
       "tags": [
         "testing-types",
@@ -55,6 +85,12 @@
       "id": 6,
       "question": "Explain regression testing and when it's necessary.",
       "answer": "Regression testing verifies existing functionality still works after changes. When needed: 1) After bug fixes, 2) New features added, 3) Code refactoring, 4) Environment changes. Use automated tests for efficiency. Prevents breaking existing features while developing new ones.",
+      "options": [
+        "Testing that goes backwards in time",
+        "Verifying existing features after changes",
+        "Only testing new features"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": [
         "regression",
@@ -65,6 +101,12 @@
       "id": 7,
       "question": "What is the AAA pattern in testing?",
       "answer": "AAA stands for Arrange-Act-Assert. Structure: 1) ARRANGE: Set up test data and preconditions, 2) ACT: Execute the code under test, 3) ASSERT: Verify the expected outcome. Makes tests readable and maintainable. Example: arrange user data, act by calling login(), assert user is logged in.",
+      "options": [
+        "Always Automate All tests",
+        "Arrange-Act-Assert test structure",
+        "Advanced Automation Architecture"
+      ],
+      "correctOption": 1,
       "difficulty": "easy",
       "tags": [
         "patterns",
@@ -75,6 +117,12 @@
       "id": 8,
       "question": "What is test-driven development (TDD)?",
       "answer": "TDD: Write tests before code. Cycle: 1) Write failing test (RED), 2) Write minimal code to pass (GREEN), 3) Refactor (REFACTOR). Benefits: Better design, higher coverage, fewer bugs. Challenges: Slower initially, requires discipline. Ensures code is testable from the start.",
+      "options": [
+        "Testing during development",
+        "Write tests before code (Red-Green-Refactor)",
+        "Testing done by developers only"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": [
         "TDD",
@@ -85,6 +133,12 @@
       "id": 9,
       "question": "What are flaky tests and how do you handle them?",
       "answer": "Flaky tests: Pass/fail inconsistently without code changes. Causes: 1) Timing issues, 2) External dependencies, 3) Test order dependency, 4) Random data. Solutions: Fix root cause, add retries (temporary), use proper waits, mock dependencies, ensure test isolation. Never ignore - they erode trust in test suite.",
+      "options": [
+        "Tests written in Flake framework",
+        "Tests that pass/fail inconsistently",
+        "Tests with poor code quality"
+      ],
+      "correctOption": 1,
       "difficulty": "hard",
       "tags": [
         "flaky-tests",
@@ -95,6 +149,12 @@
       "id": 10,
       "question": "What is boundary value analysis in testing?",
       "answer": "Boundary value analysis: Testing at edges of input ranges. Test: minimum, maximum, just below/above boundaries. Example: age 0-100, test: -1, 0, 1, 99, 100, 101. Most bugs occur at boundaries. More effective than random values. Part of equivalence partitioning technique.",
+      "options": [
+        "Testing geographic boundaries",
+        "Testing at edges of input ranges (min/max)",
+        "Testing only maximum values"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": [
         "techniques",

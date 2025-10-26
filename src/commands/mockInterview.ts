@@ -41,9 +41,9 @@ export async function startMockInterview(ctx: Context, topicName: string) {
       `⏱️ Time limit: ${QUESTION_TIME_LIMIT} seconds per question\n` +
       `━━━━━━━━━━━━━━━━━━\n\n` +
       `📌 Instructions:\n` +
-      `  • Type your answer to each question\n` +
-      `  • Type "skip" to skip a question\n` +
-      `  • Answer as completely as you can\n\n` +
+      `  • Select the correct answer from 3 options\n` +
+      `  • Each question has only 1 correct answer\n` +
+      `  • Click the button to submit your choice\n\n` +
       `💡 Your answers will be scored automatically!\n\n` +
       `Ready? Let's go! 🚀`
   );
@@ -197,6 +197,15 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
     hard: "🔴",
   };
 
+  // Create inline keyboard with answer options
+  const keyboard = new InlineKeyboard();
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    keyboard
+      .text(`${label}) ${option}`, `answer_${question.id}_${index}`)
+      .row();
+  });
+
   await ctx.reply(
     `━━━━━━━━━━━━━━━━━━\n` +
       `📊 Progress: ${progressBar} ${progress}/${total}\n` +
@@ -207,8 +216,8 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
       `━━━━━━━━━━━━━━━━━━\n\n` +
       `❓ QUESTION:\n\n${question.question}\n\n` +
       `━━━━━━━━━━━━━━━━━━\n\n` +
-      `💬 Type your answer below\n` +
-      `⏭️ Type "skip" to skip`
+      `� Select your answer:`,
+    { reply_markup: keyboard }
   );
 }
 
@@ -345,6 +354,108 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
     .text("🏠 Home", "back_to_start");
 
   await ctx.reply(resultMessage, { reply_markup: keyboard });
+}
+
+export async function handleAnswerSelection(
+  ctx: Context,
+  questionId: number,
+  selectedOption: number
+) {
+  const userId = ctx.from?.id;
+  if (!userId) return;
+
+  const session = interviewSessions.get(userId);
+  if (!session) {
+    await ctx.answerCallbackQuery({
+      text: "No active interview session!",
+    });
+    return;
+  }
+
+  const currentQuestion = session.questions[session.currentQuestionIndex];
+
+  // Verify this is the current question
+  if (currentQuestion.id !== questionId) {
+    await ctx.answerCallbackQuery({
+      text: "Please answer the current question!",
+    });
+    return;
+  }
+
+  const timeTaken = Math.floor((Date.now() - session.questionStartTime) / 1000);
+
+  // Check if time limit exceeded
+  if (timeTaken > session.timeLimit) {
+    session.results.push({
+      question: currentQuestion,
+      userAnswer: "TIME OUT",
+      isCorrect: false,
+      timeTaken: session.timeLimit,
+    });
+
+    await ctx.answerCallbackQuery();
+    await ctx.reply(
+      `⏰ TIME'S UP!\n\n` +
+        `You exceeded the ${session.timeLimit}s time limit.\n\n` +
+        `━━━━━━━━━━━━━━━━━━\n` +
+        `✅ CORRECT ANSWER:\n\n${
+          currentQuestion.options[currentQuestion.correctOption]
+        }\n` +
+        `━━━━━━━━━━━━━━━━━━`
+    );
+  } else {
+    // Check if answer is correct
+    const isCorrect = selectedOption === currentQuestion.correctOption;
+    const selectedLabel = String.fromCharCode(65 + selectedOption);
+    const correctLabel = String.fromCharCode(
+      65 + currentQuestion.correctOption
+    );
+
+    session.results.push({
+      question: currentQuestion,
+      userAnswer: `${selectedLabel}) ${currentQuestion.options[selectedOption]}`,
+      isCorrect,
+      timeTaken,
+    });
+
+    await ctx.answerCallbackQuery();
+
+    if (isCorrect) {
+      const encouragement = getEncouragement(true);
+      await ctx.reply(
+        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
+          `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n\n` +
+          `━━━━━━━━━━━━━━━━━━\n` +
+          `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
+          `━━━━━━━━━━━━━━━━━━`
+      );
+    } else {
+      const encouragement = getEncouragement(false);
+      await ctx.reply(
+        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
+          `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n` +
+          `━━━━━━━━━━━━━━━━━━\n` +
+          `✅ CORRECT ANSWER:\n\n${correctLabel}) ${
+            currentQuestion.options[currentQuestion.correctOption]
+          }\n\n` +
+          `━━━━━━━━━━━━━━━━━━\n` +
+          `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
+          `━━━━━━━━━━━━━━━━━━`
+      );
+    }
+  }
+
+  // Move to next question
+  session.currentQuestionIndex++;
+
+  if (session.currentQuestionIndex >= session.questions.length) {
+    await showTestResults(ctx, session);
+    interviewSessions.delete(userId);
+  } else {
+    session.questionStartTime = Date.now();
+    await ctx.reply(`\n⬇️ NEXT QUESTION ⬇️\n`);
+    await showCurrentQuestion(ctx, userId);
+  }
 }
 
 function checkAnswer(userAnswer: string, correctAnswer: string): boolean {

@@ -6,6 +6,12 @@
       "id": 1,
       "question": "What is TypeScript and what problems does it solve?",
       "answer": "TypeScript is a superset of JavaScript that adds static typing. Benefits: 1) Catches errors at compile-time, 2) Better IDE support (autocomplete, refactoring), 3) Improved code documentation, 4) Easier refactoring in large codebases, 5) Enhanced OOP features (interfaces, generics).",
+      "options": [
+        "A JavaScript framework for building UIs",
+        "A superset of JavaScript with static typing",
+        "A database query language"
+      ],
+      "correctOption": 1,
       "difficulty": "easy",
       "tags": ["basics"]
     },
@@ -13,6 +19,12 @@
       "id": 2,
       "question": "Explain the difference between 'interface' and 'type' in TypeScript.",
       "answer": "Both define types, but: INTERFACE - Can be extended/merged, better for object shapes, more readable errors. TYPE - Can represent unions, intersections, primitives, tuples. Use interface for objects/classes, type for unions/complex types. Example: type ID = string | number; interface User { id: ID; name: string; }",
+      "options": [
+        "They are exactly the same",
+        "Interface can be merged, type supports unions",
+        "Type is faster at runtime"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": ["types", "interfaces"]
     },
@@ -20,6 +32,12 @@
       "id": 3,
       "question": "What are TypeScript Generics and why are they useful?",
       "answer": "Generics allow writing reusable code that works with multiple types. Example: function identity<T>(arg: T): T { return arg; } Benefits: 1) Type safety without duplication, 2) Code reusability, 3) Better than 'any' type. Common in arrays: Array<T>, Promise<T>.",
+      "options": [
+        "Functions that only work with generic objects",
+        "Reusable code with type safety for multiple types",
+        "A way to skip type checking"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": ["generics", "advanced"]
     },
@@ -27,6 +45,12 @@
       "id": 4,
       "question": "What is 'unknown' type and how is it different from 'any'?",
       "answer": "'unknown' is type-safe version of 'any'. With 'any', you can do anything (no checks). With 'unknown', you must narrow the type before use (type guards). Example: let val: unknown; if (typeof val === 'string') { val.toUpperCase(); } Use 'unknown' instead of 'any' for better safety.",
+      "options": [
+        "They are the same type",
+        "'unknown' requires type checking before use, 'any' doesn't",
+        "'unknown' is only for external APIs"
+      ],
+      "correctOption": 1,
       "difficulty": "hard",
       "tags": ["types", "safety"]
     },
@@ -34,6 +58,12 @@
       "id": 5,
       "question": "What are TypeScript utility types? Give examples.",
       "answer": "Utility types transform existing types. Common ones: 1) Partial<T> - makes all properties optional, 2) Required<T> - makes all required, 3) Pick<T, K> - selects specific properties, 4) Omit<T, K> - excludes properties, 5) Record<K, T> - creates object type. Example: Partial<User> allows all User fields to be optional.",
+      "options": [
+        "Built-in types that transform other types",
+        "Helper functions for debugging",
+        "Types only for utility libraries"
+      ],
+      "correctOption": 0,
       "difficulty": "medium",
       "tags": ["utility-types", "advanced"]
     },
@@ -41,6 +71,12 @@
       "id": 6,
       "question": "Explain TypeScript's 'never' type and when to use it.",
       "answer": "'never' represents values that never occur. Uses: 1) Functions that never return (throw errors, infinite loops), 2) Exhaustive type checking, 3) Unreachable code. Example: function error(msg: string): never { throw new Error(msg); } Also used in conditional types to filter out unwanted cases.",
+      "options": [
+        "For values that are always null",
+        "For values that never occur (unreachable code)",
+        "For optional function parameters"
+      ],
+      "correctOption": 1,
       "difficulty": "hard",
       "tags": ["types", "advanced"]
     },
@@ -48,6 +84,12 @@
       "id": 7,
       "question": "What is type narrowing in TypeScript?",
       "answer": "Type narrowing is refining types to more specific ones using type guards. Methods: 1) typeof checks, 2) instanceof, 3) in operator, 4) Custom type guards with 'is'. Example: if (typeof x === 'string') { x.toUpperCase(); } TypeScript knows x is string inside the block.",
+      "options": [
+        "Removing unused types from your code",
+        "Refining types to more specific ones with type guards",
+        "Reducing the size of compiled JavaScript"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": ["type-guards", "narrowing"]
     },
@@ -55,6 +97,12 @@
       "id": 8,
       "question": "What are mapped types in TypeScript?",
       "answer": "Mapped types create new types by transforming properties of existing types. Syntax: { [K in keyof T]: NewType }. Example: type Readonly<T> = { readonly [K in keyof T]: T[K]; }. Useful for creating variations like making all properties optional, readonly, or nullable.",
+      "options": [
+        "Types for geographic mapping",
+        "New types by transforming existing type properties",
+        "Types that map to database schemas"
+      ],
+      "correctOption": 1,
       "difficulty": "hard",
       "tags": ["mapped-types", "advanced"]
     },
@@ -62,6 +110,12 @@
       "id": 9,
       "question": "Explain the 'readonly' modifier in TypeScript.",
       "answer": "readonly makes properties immutable after initialization. Can be used on: 1) Interface/type properties, 2) Array (ReadonlyArray<T>), 3) Class properties. Example: interface Point { readonly x: number; } Once set, x cannot be changed. Use for immutability and preventing accidental modifications.",
+      "options": [
+        "Makes properties private",
+        "Makes properties immutable after initialization",
+        "Only allows read operations on files"
+      ],
+      "correctOption": 1,
       "difficulty": "easy",
       "tags": ["modifiers", "immutability"]
     },
@@ -69,6 +123,12 @@
       "id": 10,
       "question": "What is the difference between 'const' and 'readonly'?",
       "answer": "const - for variables, prevents reassignment. readonly - for properties, prevents modification after initialization. const x = [1,2]; x.push(3); // OK. interface Props { readonly items: number[]; } props.items.push(3); // Error. Use const for variables, readonly for object properties.",
+      "options": [
+        "They are the same thing",
+        "'const' for variables, 'readonly' for properties",
+        "'const' is for constants, 'readonly' for strings"
+      ],
+      "correctOption": 1,
       "difficulty": "medium",
       "tags": ["const", "readonly", "immutability"]
     }

@@ -5,8 +5,8 @@ import { topicCommand } from "./commands/topic";
 import { topicsCommand } from "./commands/topics";
 import {
   mockInterviewCommand,
-  handleInterviewResponse,
   startMockInterview,
+  handleAnswerSelection,
 } from "./commands/mockInterview";
 import dataService from "./services/dataService";
 
@@ -87,6 +87,12 @@ bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
     hard: "🔴",
   };
 
+  let optionsText = "";
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    optionsText += `${label}) ${option}\n`;
+  });
+
   const message = `
 📚 Topic: ${topic.toUpperCase()}
 ${
@@ -100,10 +106,15 @@ ${
 ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
+
+OPTIONS:
+
+${optionsText}
+━━━━━━━━━━━━━━━━━━
   `;
 
   const keyboard = new InlineKeyboard()
-    .text("💡 Show Answer", `answer_${question.id}_${topic}`)
+    .text("💡 Show Answer", `show_answer_${question.id}_${topic}`)
     .row()
     .text("🔄 Another Question", `practice_${topic}`)
     .row()
@@ -114,7 +125,7 @@ ${question.question}
 });
 
 // Handle show answer button
-bot.callbackQuery(/^answer_(\d+)_(.+)$/, async (ctx) => {
+bot.callbackQuery(/^show_answer_(\d+)_(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const questionId = parseInt(ctx.match[1]);
   const topic = ctx.match[2];
@@ -132,6 +143,15 @@ bot.callbackQuery(/^answer_(\d+)_(.+)$/, async (ctx) => {
     hard: "🔴",
   };
 
+  const correctLabel = String.fromCharCode(65 + question.correctOption);
+
+  let optionsText = "";
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index);
+    const marker = index === question.correctOption ? "✅" : "  ";
+    optionsText += `${marker} ${label}) ${option}\n`;
+  });
+
   const message = `
 📚 Topic: ${topic.toUpperCase()}
 ${
@@ -146,7 +166,14 @@ ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
 
-💡 ANSWER:
+OPTIONS:
+
+${optionsText}
+━━━━━━━━━━━━━━━━━━
+
+✅ CORRECT ANSWER: ${correctLabel}
+
+💡 EXPLANATION:
 
 ${question.answer}
 
@@ -170,7 +197,13 @@ bot.callbackQuery(/^test_(.+)$/, async (ctx) => {
   await startMockInterview(ctx, topic);
 });
 
-bot.on("message:text", handleInterviewResponse);
+// Handle answer selection in mock interviews
+bot.callbackQuery(/^answer_(\d+)_(\d+)$/, async (ctx) => {
+  const questionId = parseInt(ctx.match[1]);
+  const selectedOption = parseInt(ctx.match[2]);
+
+  await handleAnswerSelection(ctx, questionId, selectedOption);
+});
 
 bot.catch((err) => {
   console.error("Error in bot:", err);
