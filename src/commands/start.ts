@@ -33,7 +33,8 @@ ${topicList}
     .text("🎓 Practice Mode", "practice_mode")
     .text("🔥 Test Mode", "test_mode")
     .row()
-    .text("📚 View Topics", "view_topics");
+    .text("📚 View Topics", "view_topics")
+    .text("ℹ️ Help", "show_help");
 
   await ctx.reply(message, { reply_markup: keyboard });
 }

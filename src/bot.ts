@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { startCommand } from "./commands/start";
 import { topicCommand } from "./commands/topic";
 import { topicsCommand } from "./commands/topics";
+import { menuCommand, helpCommand } from "./commands/menu";
 import {
   mockInterviewCommand,
   startMockInterview,
@@ -21,6 +22,8 @@ if (!BOT_TOKEN) {
 const bot = new Bot(BOT_TOKEN);
 
 bot.command("start", startCommand);
+bot.command("menu", menuCommand);
+bot.command("help", helpCommand);
 bot.command("topic", topicCommand);
 bot.command("topics", topicsCommand);
 bot.command("mockinterview", mockInterviewCommand);
@@ -65,6 +68,11 @@ bot.callbackQuery("view_topics", async (ctx) => {
   await topicsCommand(ctx as any);
 });
 
+bot.callbackQuery("show_help", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await helpCommand(ctx as any);
+});
+
 bot.callbackQuery("back_to_start", async (ctx) => {
   await ctx.answerCallbackQuery();
   await startCommand(ctx as any);
@@ -87,12 +95,6 @@ bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
     hard: "🔴",
   };
 
-  let optionsText = "";
-  question.options.forEach((option, index) => {
-    const label = String.fromCharCode(65 + index); // A, B, C
-    optionsText += `${label}) ${option}\n`;
-  });
-
   const message = `
 📚 Topic: ${topic.toUpperCase()}
 ${
@@ -107,28 +109,33 @@ ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
 
-OPTIONS:
-
-${optionsText}
-━━━━━━━━━━━━━━━━━━
+👇 Select your answer:
   `;
 
-  const keyboard = new InlineKeyboard()
-    .text("💡 Show Answer", `show_answer_${question.id}_${topic}`)
-    .row()
+  // Create answer buttons
+  const keyboard = new InlineKeyboard();
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    keyboard
+      .text(
+        `${label}) ${option}`,
+        `practice_answer_${question.id}_${index}_${topic}`
+      )
+      .row();
+  });
+  keyboard
     .text("🔄 Another Question", `practice_${topic}`)
-    .row()
-    .text("🔥 Start Test", `test_${topic}`)
     .text("🏠 Home", "back_to_start");
 
   await ctx.reply(message, { reply_markup: keyboard });
 });
 
-// Handle show answer button
-bot.callbackQuery(/^show_answer_(\d+)_(.+)$/, async (ctx) => {
+// Handle practice mode answer selection
+bot.callbackQuery(/^practice_answer_(\d+)_(\d+)_(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const questionId = parseInt(ctx.match[1]);
-  const topic = ctx.match[2];
+  const selectedOption = parseInt(ctx.match[2]);
+  const topic = ctx.match[3];
 
   const topicData = dataService.getTopic(topic);
   const question = topicData?.questions.find((q) => q.id === questionId);
@@ -143,16 +150,28 @@ bot.callbackQuery(/^show_answer_(\d+)_(.+)$/, async (ctx) => {
     hard: "🔴",
   };
 
+  const isCorrect = selectedOption === question.correctOption;
+  const selectedLabel = String.fromCharCode(65 + selectedOption);
   const correctLabel = String.fromCharCode(65 + question.correctOption);
 
   let optionsText = "";
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index);
-    const marker = index === question.correctOption ? "✅" : "  ";
+    let marker = "  ";
+    if (index === question.correctOption) {
+      marker = "✅";
+    } else if (index === selectedOption && !isCorrect) {
+      marker = "❌";
+    }
     optionsText += `${marker} ${label}) ${option}\n`;
   });
 
+  const resultEmoji = isCorrect ? "🎉" : "💡";
+  const resultText = isCorrect ? "CORRECT!" : "INCORRECT";
+
   const message = `
+${resultEmoji} ${resultText}
+
 📚 Topic: ${topic.toUpperCase()}
 ${
   difficultyEmoji[question.difficulty]
@@ -166,12 +185,14 @@ ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
 
-OPTIONS:
-
 ${optionsText}
 ━━━━━━━━━━━━━━━━━━
 
-✅ CORRECT ANSWER: ${correctLabel}
+${
+  isCorrect
+    ? `✅ You selected: ${selectedLabel} - That's right!`
+    : `❌ You selected: ${selectedLabel}\n✅ Correct answer: ${correctLabel}`
+}
 
 💡 EXPLANATION:
 
