@@ -197,13 +197,18 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
     hard: "🔴",
   };
 
-  // Create inline keyboard with answer options
+  // Display all options in the message
+  let optionsText = "";
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    optionsText += `${label}) ${option}\n\n`;
+  });
+
+  // Create inline keyboard with just letter labels
   const keyboard = new InlineKeyboard();
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
-    keyboard
-      .text(`${label}) ${option}`, `answer_${question.id}_${index}`)
-      .row();
+    keyboard.text(`${label}`, `answer_${question.id}_${index}`).row();
   });
 
   await ctx.reply(
@@ -216,7 +221,9 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
       `━━━━━━━━━━━━━━━━━━\n\n` +
       `❓ QUESTION:\n\n${question.question}\n\n` +
       `━━━━━━━━━━━━━━━━━━\n\n` +
-      `� Select your answer:`,
+      `${optionsText}` +
+      `━━━━━━━━━━━━━━━━━━\n\n` +
+      `👇 Select your answer:`,
     { reply_markup: keyboard }
   );
 }

@@ -95,6 +95,13 @@ bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
     hard: "🔴",
   };
 
+  // Display all options in the message
+  let optionsText = "";
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    optionsText += `${label}) ${option}\n\n`;
+  });
+
   const message = `
 📚 Topic: ${topic.toUpperCase()}
 ${
@@ -109,18 +116,17 @@ ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
 
+${optionsText}━━━━━━━━━━━━━━━━━━
+
 👇 Select your answer:
   `;
 
-  // Create answer buttons
+  // Create answer buttons with just labels
   const keyboard = new InlineKeyboard();
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
     keyboard
-      .text(
-        `${label}) ${option}`,
-        `practice_answer_${question.id}_${index}_${topic}`
-      )
+      .text(`${label}`, `practice_answer_${question.id}_${index}_${topic}`)
       .row();
   });
   keyboard
