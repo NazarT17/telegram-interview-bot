@@ -125,11 +125,13 @@ ${optionsText}━━━━━━━━━━━━━━━━━━
   const keyboard = new InlineKeyboard();
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
-    keyboard
-      .text(`${label}`, `practice_answer_${question.id}_${index}_${topic}`)
-      .row();
+    keyboard.text(
+      `${label}`,
+      `practice_answer_${question.id}_${index}_${topic}`
+    );
   });
   keyboard
+    .row()
     .text("🔄 Another Question", `practice_${topic}`)
     .text("🏠 Home", "back_to_start");
 

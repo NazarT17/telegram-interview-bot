@@ -208,8 +208,9 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
   const keyboard = new InlineKeyboard();
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
-    keyboard.text(`${label}`, `answer_${question.id}_${index}`).row();
+    keyboard.text(`${label}`, `answer_${question.id}_${index}`);
   });
+  keyboard.row(); // Start new row for navigation
 
   await ctx.reply(
     `━━━━━━━━━━━━━━━━━━\n` +
