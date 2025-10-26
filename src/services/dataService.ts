@@ -48,6 +48,12 @@ class DataService {
     return shuffled.slice(0, Math.min(count, shuffled.length));
   }
 
+  getQuestionsByTopic(topicName: string): Question[] | null {
+    const topic = this.getTopic(topicName);
+    if (!topic) return null;
+    return topic.questions;
+  }
+
   getQuestionsByDifficulty(difficulty: "easy" | "medium" | "hard"): Question[] {
     const questions: Question[] = [];
 

@@ -12,10 +12,20 @@ export interface Topic {
   questions: Question[];
 }
 
+export interface QuestionResult {
+  question: Question;
+  userAnswer: string;
+  isCorrect: boolean;
+  timeTaken: number; // in seconds
+}
+
 export interface MockInterviewState {
   userId: number;
+  topicName: string;
   currentQuestionIndex: number;
   questions: Question[];
-  score: number;
-  startTime: Date;
+  results: QuestionResult[];
+  startTime: number;
+  questionStartTime: number;
+  timeLimit: number; // seconds per question
 }
