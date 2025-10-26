@@ -1,0 +1,34 @@
+{
+  "name": "TypeScript",
+  "description": "TypeScript programming questions",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is TypeScript and what problems does it solve?",
+      "answer": "TypeScript is a superset of JavaScript that adds static typing. Benefits: 1) Catches errors at compile-time, 2) Better IDE support (autocomplete, refactoring), 3) Improved code documentation, 4) Easier refactoring in large codebases, 5) Enhanced OOP features (interfaces, generics).",
+      "difficulty": "easy",
+      "tags": ["basics"]
+    },
+    {
+      "id": 2,
+      "question": "Explain the difference between 'interface' and 'type' in TypeScript.",
+      "answer": "Both define types, but: INTERFACE - Can be extended/merged, better for object shapes, more readable errors. TYPE - Can represent unions, intersections, primitives, tuples. Use interface for objects/classes, type for unions/complex types. Example: type ID = string | number; interface User { id: ID; name: string; }",
+      "difficulty": "medium",
+      "tags": ["types", "interfaces"]
+    },
+    {
+      "id": 3,
+      "question": "What are TypeScript Generics and why are they useful?",
+      "answer": "Generics allow writing reusable code that works with multiple types. Example: function identity<T>(arg: T): T { return arg; } Benefits: 1) Type safety without duplication, 2) Code reusability, 3) Better than 'any' type. Common in arrays: Array<T>, Promise<T>.",
+      "difficulty": "medium",
+      "tags": ["generics", "advanced"]
+    },
+    {
+      "id": 4,
+      "question": "What is 'unknown' type and how is it different from 'any'?",
+      "answer": "'unknown' is type-safe version of 'any'. With 'any', you can do anything (no checks). With 'unknown', you must narrow the type before use (type guards). Example: let val: unknown; if (typeof val === 'string') { val.toUpperCase(); } Use 'unknown' instead of 'any' for better safety.",
+      "difficulty": "hard",
+      "tags": ["types", "safety"]
+    }
+  ]
+}

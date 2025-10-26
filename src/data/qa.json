@@ -1,0 +1,27 @@
+{
+  "name": "QA General",
+  "description": "General QA and testing questions",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the difference between functional and non-functional testing?",
+      "answer": "FUNCTIONAL: Tests what the system does (features, functionality). Examples: login, checkout, search. NON-FUNCTIONAL: Tests how the system performs (performance, security, usability). Examples: load testing, security audits, accessibility.",
+      "difficulty": "easy",
+      "tags": ["testing-types"]
+    },
+    {
+      "id": 2,
+      "question": "Explain the testing pyramid concept.",
+      "answer": "Testing pyramid shows test distribution: BASE (most tests) - Unit tests (fast, isolated, many). MIDDLE - Integration tests (moderate speed, test interactions). TOP (fewest) - E2E tests (slow, expensive, full user flows). Principle: more lower-level tests, fewer high-level tests.",
+      "difficulty": "medium",
+      "tags": ["strategy", "best-practices"]
+    },
+    {
+      "id": 3,
+      "question": "What is test coverage and is 100% coverage a good goal?",
+      "answer": "Test coverage measures % of code executed by tests. 100% coverage ≠ bug-free code. Problems: 1) Can test wrong things, 2) Doesn't guarantee quality assertions, 3) Expensive to maintain. Better: focus on critical paths, aim for 70-80% coverage with meaningful tests.",
+      "difficulty": "medium",
+      "tags": ["metrics", "strategy"]
+    }
+  ]
+}
