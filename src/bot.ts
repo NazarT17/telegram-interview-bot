@@ -78,67 +78,7 @@ bot.callbackQuery("back_to_start", async (ctx) => {
   await startCommand(ctx as any);
 });
 
-// Handle practice mode topic selection
-bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const topic = ctx.match[1];
-
-  const question = dataService.getRandomQuestion(topic);
-
-  if (!question) {
-    return ctx.reply("❌ No questions found for this topic.");
-  }
-
-  const difficultyEmoji = {
-    easy: "🟢",
-    medium: "🟡",
-    hard: "🔴",
-  };
-
-  // Display all options in the message
-  let optionsText = "";
-  question.options.forEach((option, index) => {
-    const label = String.fromCharCode(65 + index); // A, B, C
-    optionsText += `${label}) ${option}\n\n`;
-  });
-
-  const message = `
-📚 Topic: ${topic.toUpperCase()}
-${
-  difficultyEmoji[question.difficulty]
-} Difficulty: ${question.difficulty.toUpperCase()}
-
-━━━━━━━━━━━━━━━━━━
-
-❓ QUESTION:
-
-${question.question}
-
-━━━━━━━━━━━━━━━━━━
-
-${optionsText}━━━━━━━━━━━━━━━━━━
-
-👇 Select your answer:
-  `;
-
-  // Create answer buttons with just labels
-  const keyboard = new InlineKeyboard();
-  question.options.forEach((option, index) => {
-    const label = String.fromCharCode(65 + index); // A, B, C
-    keyboard.text(
-      `${label}`,
-      `practice_answer_${question.id}_${index}_${topic}`
-    );
-  });
-  keyboard
-    .row()
-    .text("🔄 Another Question", `practice_${topic}`)
-    .text("🏠 Home", "back_to_start");
-
-  await ctx.reply(message, { reply_markup: keyboard });
-});
-
-// Handle practice mode answer selection
+// Handle practice mode answer selection - MUST be before general practice_ handler
 bot.callbackQuery(/^practice_answer_(\d+)_(\d+)_(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const questionId = parseInt(ctx.match[1]);
@@ -216,6 +156,66 @@ ${question.answer}
     .text("🏠 Home", "back_to_start");
 
   await ctx.editMessageText(message, { reply_markup: keyboard });
+});
+
+// Handle practice mode topic selection
+bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const topic = ctx.match[1];
+
+  const question = dataService.getRandomQuestion(topic);
+
+  if (!question) {
+    return ctx.reply("❌ No questions found for this topic.");
+  }
+
+  const difficultyEmoji = {
+    easy: "🟢",
+    medium: "🟡",
+    hard: "🔴",
+  };
+
+  // Display all options in the message
+  let optionsText = "";
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    optionsText += `${label}) ${option}\n\n`;
+  });
+
+  const message = `
+📚 Topic: ${topic.toUpperCase()}
+${
+  difficultyEmoji[question.difficulty]
+} Difficulty: ${question.difficulty.toUpperCase()}
+
+━━━━━━━━━━━━━━━━━━
+
+❓ QUESTION:
+
+${question.question}
+
+━━━━━━━━━━━━━━━━━━
+
+${optionsText}━━━━━━━━━━━━━━━━━━
+
+👇 Select your answer:
+  `;
+
+  // Create answer buttons with just labels
+  const keyboard = new InlineKeyboard();
+  question.options.forEach((option, index) => {
+    const label = String.fromCharCode(65 + index); // A, B, C
+    keyboard.text(
+      `${label}`,
+      `practice_answer_${question.id}_${index}_${topic}`
+    );
+  });
+  keyboard
+    .row()
+    .text("🔄 Another Question", `practice_${topic}`)
+    .text("🏠 Home", "back_to_start");
+
+  await ctx.reply(message, { reply_markup: keyboard });
 });
 
 // Handle test mode topic selection
