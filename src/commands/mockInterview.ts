@@ -5,25 +5,9 @@ import { MockInterviewState, QuestionResult } from "../types";
 const interviewSessions = new Map<number, MockInterviewState>();
 const QUESTION_TIME_LIMIT = 120; // 2 minutes per question in seconds
 
-export async function mockInterviewCommand(ctx: CommandContext<Context>) {
+export async function startMockInterview(ctx: Context, topicName: string) {
   const userId = ctx.from?.id;
   if (!userId) return;
-
-  // Get topic from command argument
-  const commandText = ctx.message?.text || "";
-  const topicName = commandText.split(" ")[1]?.toLowerCase();
-
-  if (!topicName) {
-    return ctx.reply(
-      `⚠️ Please specify a topic!\n\n` +
-        `📝 Usage: /mockinterview <topic>\n\n` +
-        `💡 Example:\n` +
-        `   /mockinterview typescript\n` +
-        `   /mockinterview playwright\n` +
-        `   /mockinterview qa\n\n` +
-        `📚 Use /topics to see all available topics.`
-    );
-  }
 
   const questions = dataService.getQuestionsByTopic(topicName);
 
@@ -65,6 +49,29 @@ export async function mockInterviewCommand(ctx: CommandContext<Context>) {
   );
 
   await showCurrentQuestion(ctx, userId);
+}
+
+export async function mockInterviewCommand(ctx: CommandContext<Context>) {
+  const userId = ctx.from?.id;
+  if (!userId) return;
+
+  // Get topic from command argument
+  const commandText = ctx.message?.text || "";
+  const topicName = commandText.split(" ")[1]?.toLowerCase();
+
+  if (!topicName) {
+    return ctx.reply(
+      `⚠️ Please specify a topic!\n\n` +
+        `📝 Usage: /mockinterview <topic>\n\n` +
+        `💡 Example:\n` +
+        `   /mockinterview typescript\n` +
+        `   /mockinterview playwright\n` +
+        `   /mockinterview qa\n\n` +
+        `📚 Use /topics to see all available topics.`
+    );
+  }
+
+  await startMockInterview(ctx, topicName);
 }
 
 export async function handleInterviewResponse(ctx: Context) {

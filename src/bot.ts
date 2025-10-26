@@ -6,6 +6,7 @@ import { topicsCommand } from "./commands/topics";
 import {
   mockInterviewCommand,
   handleInterviewResponse,
+  startMockInterview,
 } from "./commands/mockInterview";
 import dataService from "./services/dataService";
 
@@ -166,16 +167,7 @@ bot.callbackQuery(/^test_(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const topic = ctx.match[1];
 
-  // Simulate the /mockinterview command
-  const fakeCtx = {
-    ...ctx,
-    message: {
-      ...ctx.callbackQuery.message,
-      text: `/mockinterview ${topic}`,
-    },
-  };
-
-  await mockInterviewCommand(fakeCtx as any);
+  await startMockInterview(ctx, topic);
 });
 
 bot.on("message:text", handleInterviewResponse);
