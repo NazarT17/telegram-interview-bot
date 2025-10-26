@@ -1,4 +1,4 @@
-import { CommandContext, Context } from "grammy";
+import { CommandContext, Context, InlineKeyboard } from "grammy";
 import dataService from "../services/dataService";
 
 export async function topicsCommand(ctx: CommandContext<Context>) {
@@ -19,14 +19,16 @@ ${topicDetails}
 
 ━━━━━━━━━━━━━━━━━━
 
-🎓 Practice a topic:
-/topic <name>
-
-🔥 Take a mock interview:
-/mockinterview <topic>
-
-Example: /mockinterview typescript
+Choose a mode below:
   `;
 
-  await ctx.reply(message);
+  const keyboard = new InlineKeyboard();
+
+  // Add practice mode buttons
+  keyboard.text("🎓 Practice Mode", "practice_mode").row();
+
+  // Add test mode buttons
+  keyboard.text("🔥 Test Mode", "test_mode");
+
+  await ctx.reply(message, { reply_markup: keyboard });
 }

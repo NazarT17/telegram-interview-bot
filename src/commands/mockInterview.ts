@@ -1,4 +1,4 @@
-import { CommandContext, Context } from "grammy";
+import { CommandContext, Context, InlineKeyboard } from "grammy";
 import dataService from "../services/dataService";
 import { MockInterviewState, QuestionResult } from "../types";
 
@@ -329,12 +329,15 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
   }
 
   resultMessage +=
-    `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `🔄 Try again: /mockinterview ${session.topicName}\n` +
-    `📚 Practice mode: /topic ${session.topicName}\n` +
-    `🏠 Main menu: /start`;
+    `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` + `Choose what to do next:`;
 
-  await ctx.reply(resultMessage);
+  const keyboard = new InlineKeyboard()
+    .text("🔄 Retry Test", `test_${session.topicName}`)
+    .text("📚 Practice", `practice_${session.topicName}`)
+    .row()
+    .text("🏠 Home", "back_to_start");
+
+  await ctx.reply(resultMessage, { reply_markup: keyboard });
 }
 
 function checkAnswer(userAnswer: string, correctAnswer: string): boolean {

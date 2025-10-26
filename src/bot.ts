@@ -1,4 +1,4 @@
-import { Bot } from "grammy";
+import { Bot, InlineKeyboard } from "grammy";
 import dotenv from "dotenv";
 import { startCommand } from "./commands/start";
 import { topicCommand } from "./commands/topic";
@@ -7,6 +7,7 @@ import {
   mockInterviewCommand,
   handleInterviewResponse,
 } from "./commands/mockInterview";
+import dataService from "./services/dataService";
 
 dotenv.config();
 
@@ -22,6 +23,115 @@ bot.command("start", startCommand);
 bot.command("topic", topicCommand);
 bot.command("topics", topicsCommand);
 bot.command("mockinterview", mockInterviewCommand);
+
+// Callback query handlers for inline buttons
+bot.callbackQuery("practice_mode", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const topics = dataService.getAllTopicNames();
+
+  const keyboard = new InlineKeyboard();
+  topics.forEach((topic) => {
+    keyboard.text(`📚 ${topic.toUpperCase()}`, `practice_${topic}`).row();
+  });
+  keyboard.text("🔙 Back", "back_to_start");
+
+  await ctx.editMessageText(
+    "🎓 Practice Mode\n\n" +
+      "Select a topic to get a random question with instant answer:",
+    { reply_markup: keyboard }
+  );
+});
+
+bot.callbackQuery("test_mode", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const topics = dataService.getAllTopicNames();
+
+  const keyboard = new InlineKeyboard();
+  topics.forEach((topic) => {
+    keyboard.text(`🔥 ${topic.toUpperCase()}`, `test_${topic}`).row();
+  });
+  keyboard.text("🔙 Back", "back_to_start");
+
+  await ctx.editMessageText(
+    "🔥 Test Mode\n\n" +
+      "Select a topic for a timed mock interview with scoring:",
+    { reply_markup: keyboard }
+  );
+});
+
+bot.callbackQuery("view_topics", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await topicsCommand(ctx as any);
+});
+
+bot.callbackQuery("back_to_start", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await startCommand(ctx as any);
+});
+
+// Handle practice mode topic selection
+bot.callbackQuery(/^practice_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const topic = ctx.match[1];
+
+  const question = dataService.getRandomQuestion(topic);
+
+  if (!question) {
+    return ctx.reply("❌ No questions found for this topic.");
+  }
+
+  const difficultyEmoji = {
+    easy: "🟢",
+    medium: "🟡",
+    hard: "🔴",
+  };
+
+  const message = `
+📚 Topic: ${topic.toUpperCase()}
+${
+  difficultyEmoji[question.difficulty]
+} Difficulty: ${question.difficulty.toUpperCase()}
+
+━━━━━━━━━━━━━━━━━━
+
+❓ QUESTION:
+
+${question.question}
+
+━━━━━━━━━━━━━━━━━━
+
+💡 ANSWER:
+
+${question.answer}
+
+━━━━━━━━━━━━━━━━━━
+  `;
+
+  const keyboard = new InlineKeyboard()
+    .text("🔄 Another Question", `practice_${topic}`)
+    .row()
+    .text("🔥 Start Test", `test_${topic}`)
+    .text("🏠 Home", "back_to_start");
+
+  await ctx.reply(message, { reply_markup: keyboard });
+});
+
+// Handle test mode topic selection
+bot.callbackQuery(/^test_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const topic = ctx.match[1];
+
+  // Simulate the /mockinterview command
+  const fakeCtx = {
+    ...ctx,
+    message: {
+      ...ctx.callbackQuery.message,
+      text: `/mockinterview ${topic}`,
+    },
+  };
+
+  await mockInterviewCommand(fakeCtx as any);
+});
 
 bot.on("message:text", handleInterviewResponse);
 

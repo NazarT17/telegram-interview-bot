@@ -1,4 +1,4 @@
-import { CommandContext, Context } from "grammy";
+import { CommandContext, Context, InlineKeyboard } from "grammy";
 import dataService from "../services/dataService";
 
 export async function startCommand(ctx: CommandContext<Context>) {
@@ -29,5 +29,11 @@ ${topicList}
 💡 Tip: Start with practice mode to learn, then test yourself with mock interviews!
   `;
 
-  await ctx.reply(message);
+  const keyboard = new InlineKeyboard()
+    .text("🎓 Practice Mode", "practice_mode")
+    .text("🔥 Test Mode", "test_mode")
+    .row()
+    .text("📚 View Topics", "view_topics");
+
+  await ctx.reply(message, { reply_markup: keyboard });
 }
