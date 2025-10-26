@@ -7,17 +7,25 @@ export async function topicsCommand(ctx: CommandContext<Context>) {
   const topicDetails = topics
     .map((name) => {
       const topic = dataService.getTopic(name);
-      return `📚 ${name} - ${topic?.questions.length || 0} questions`;
+      const count = topic?.questions.length || 0;
+      return `📚 ${name.toUpperCase()}\n   └─ ${count} questions available`;
     })
-    .join("\n");
+    .join("\n\n");
 
   const message = `
-Available Topics:
+📖 Available Topics
 
 ${topicDetails}
 
-Use /topic <name> to get a question from a specific topic.
-Example: /topic playwright
+━━━━━━━━━━━━━━━━━━
+
+🎓 Practice a topic:
+/topic <name>
+
+🔥 Take a mock interview:
+/mockinterview <topic>
+
+Example: /mockinterview typescript
   `;
 
   await ctx.reply(message);

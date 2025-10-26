@@ -15,10 +15,13 @@ export async function mockInterviewCommand(ctx: CommandContext<Context>) {
 
   if (!topicName) {
     return ctx.reply(
-      "❌ Please specify a topic.\n" +
-        "Usage: /mockinterview <topic>\n" +
-        "Example: /mockinterview typescript\n\n" +
-        "Use /topics to see available topics."
+      `⚠️ Please specify a topic!\n\n` +
+        `📝 Usage: /mockinterview <topic>\n\n` +
+        `💡 Example:\n` +
+        `   /mockinterview typescript\n` +
+        `   /mockinterview playwright\n` +
+        `   /mockinterview qa\n\n` +
+        `📚 Use /topics to see all available topics.`
     );
   }
 
@@ -26,8 +29,8 @@ export async function mockInterviewCommand(ctx: CommandContext<Context>) {
 
   if (!questions || questions.length === 0) {
     return ctx.reply(
-      `❌ No questions found for topic: ${topicName}\n\n` +
-        "Use /topics to see available topics."
+      `❌ No questions found for topic: "${topicName}"\n\n` +
+        `📚 Use /topics to see all available topics.`
     );
   }
 
@@ -47,13 +50,18 @@ export async function mockInterviewCommand(ctx: CommandContext<Context>) {
   });
 
   await ctx.reply(
-    `🎯 Mock Interview Started!\n\n` +
+    `🎯 MOCK INTERVIEW STARTED!\n\n` +
+      `━━━━━━━━━━━━━━━━━━\n` +
       `📚 Topic: ${topicName.toUpperCase()}\n` +
       `📝 Questions: ${selectedQuestions.length}\n` +
-      `⏱️ Time limit: ${QUESTION_TIME_LIMIT} seconds per question\n\n` +
-      `Type your answer to each question.\n` +
-      `Type "skip" to skip a question.\n\n` +
-      `Let's begin! 🚀`
+      `⏱️ Time limit: ${QUESTION_TIME_LIMIT} seconds per question\n` +
+      `━━━━━━━━━━━━━━━━━━\n\n` +
+      `📌 Instructions:\n` +
+      `  • Type your answer to each question\n` +
+      `  • Type "skip" to skip a question\n` +
+      `  • Answer as completely as you can\n\n` +
+      `💡 Your answers will be scored automatically!\n\n` +
+      `Ready? Let's go! 🚀`
   );
 
   await showCurrentQuestion(ctx, userId);
@@ -82,8 +90,11 @@ export async function handleInterviewResponse(ctx: Context) {
     });
 
     await ctx.reply(
-      `⏰ Time's up! (${session.timeLimit}s exceeded)\n\n` +
-        `✅ Correct answer:\n${currentQuestion.answer}`
+      `⏰ TIME'S UP!\n\n` +
+        `You exceeded the ${session.timeLimit}s time limit.\n\n` +
+        `━━━━━━━━━━━━━━━━━━\n` +
+        `✅ CORRECT ANSWER:\n\n${currentQuestion.answer}\n` +
+        `━━━━━━━━━━━━━━━━━━`
     );
   } else if (userAnswer.toLowerCase() === "skip") {
     session.results.push({
@@ -94,8 +105,10 @@ export async function handleInterviewResponse(ctx: Context) {
     });
 
     await ctx.reply(
-      `⏭️ Question skipped.\n\n` +
-        `✅ Correct answer:\n${currentQuestion.answer}`
+      `⏭️ QUESTION SKIPPED\n\n` +
+        `━━━━━━━━━━━━━━━━━━\n` +
+        `✅ CORRECT ANSWER:\n\n${currentQuestion.answer}\n` +
+        `━━━━━━━━━━━━━━━━━━`
     );
   } else {
     // Simple correctness check (contains key points)
@@ -109,14 +122,20 @@ export async function handleInterviewResponse(ctx: Context) {
     });
 
     if (isCorrect) {
+      const encouragement = getEncouragement(true);
       await ctx.reply(
-        `✅ Good answer! (${timeTaken}s)\n\n` +
-          `📖 Reference answer:\n${currentQuestion.answer}`
+        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
+          `━━━━━━━━━━━━━━━━━━\n` +
+          `📖 REFERENCE ANSWER:\n\n${currentQuestion.answer}\n` +
+          `━━━━━━━━━━━━━━━━━━`
       );
     } else {
+      const encouragement = getEncouragement(false);
       await ctx.reply(
-        `❌ Not quite right. (${timeTaken}s)\n\n` +
-          `✅ Correct answer:\n${currentQuestion.answer}`
+        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
+          `━━━━━━━━━━━━━━━━━━\n` +
+          `✅ CORRECT ANSWER:\n\n${currentQuestion.answer}\n` +
+          `━━━━━━━━━━━━━━━━━━`
       );
     }
   }
@@ -129,9 +148,31 @@ export async function handleInterviewResponse(ctx: Context) {
     interviewSessions.delete(userId);
   } else {
     session.questionStartTime = Date.now();
-    await ctx.reply("---\n\nNext question:");
+    await ctx.reply(`\n⬇️ NEXT QUESTION ⬇️\n`);
     await showCurrentQuestion(ctx, userId);
   }
+}
+
+function getEncouragement(isCorrect: boolean): string {
+  const correct = [
+    "✅ Excellent answer!",
+    "✅ Great job!",
+    "✅ Well done!",
+    "✅ Perfect!",
+    "✅ Spot on!",
+    "✅ Nice work!",
+  ];
+
+  const incorrect = [
+    "❌ Not quite, but good try!",
+    "❌ Close, but not exactly!",
+    "❌ Keep practicing!",
+    "❌ Not quite right!",
+    "❌ Almost there!",
+  ];
+
+  const messages = isCorrect ? correct : incorrect;
+  return messages[Math.floor(Math.random() * messages.length)];
 }
 
 async function showCurrentQuestion(ctx: Context, userId: number) {
@@ -139,9 +180,9 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
   if (!session) return;
 
   const question = session.questions[session.currentQuestionIndex];
-  const progress = `Question ${session.currentQuestionIndex + 1}/${
-    session.questions.length
-  }`;
+  const progress = session.currentQuestionIndex + 1;
+  const total = session.questions.length;
+  const progressBar = "█".repeat(progress) + "░".repeat(total - progress);
 
   const difficultyEmoji = {
     easy: "🟢",
@@ -150,13 +191,17 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
   };
 
   await ctx.reply(
-    `${progress}\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+      `📊 Progress: ${progressBar} ${progress}/${total}\n` +
       `${
         difficultyEmoji[question.difficulty]
-      } ${question.difficulty.toUpperCase()}\n` +
-      `⏱️ Time limit: ${session.timeLimit}s\n\n` +
-      `❓ ${question.question}\n\n` +
-      `---\nType your answer below or "skip" to skip.`
+      } Difficulty: ${question.difficulty.toUpperCase()}\n` +
+      `⏱️ Time limit: ${session.timeLimit}s\n` +
+      `━━━━━━━━━━━━━━━━━━\n\n` +
+      `❓ QUESTION:\n\n${question.question}\n\n` +
+      `━━━━━━━━━━━━━━━━━━\n\n` +
+      `💬 Type your answer below\n` +
+      `⏭️ Type "skip" to skip`
   );
 }
 
@@ -165,6 +210,7 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
   const correctAnswers = session.results.filter((r) => r.isCorrect).length;
   const percentage = Math.round((correctAnswers / totalQuestions) * 100);
   const totalTime = Math.floor((Date.now() - session.startTime) / 1000);
+  const avgTime = Math.floor(totalTime / totalQuestions);
 
   // Calculate by difficulty
   const byDifficulty = {
@@ -181,58 +227,112 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
     }
   });
 
+  // Grade emoji
+  const gradeEmoji =
+    percentage >= 90
+      ? "🏆"
+      : percentage >= 80
+      ? "🥇"
+      : percentage >= 70
+      ? "🥈"
+      : percentage >= 60
+      ? "🥉"
+      : "📝";
+
   let resultMessage =
-    `\n🎉 TEST COMPLETED! 🎉\n\n` +
-    `📊 OVERALL SCORE\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `✅ Correct: ${correctAnswers}/${totalQuestions}\n` +
+    `\n${gradeEmoji} TEST COMPLETED! ${gradeEmoji}\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📊 OVERALL PERFORMANCE\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `✅ Correct Answers: ${correctAnswers}/${totalQuestions}\n` +
     `📈 Score: ${percentage}%\n` +
-    `⏱️ Total time: ${Math.floor(totalTime / 60)}m ${totalTime % 60}s\n\n` +
-    `📚 BY DIFFICULTY\n` +
-    `━━━━━━━━━━━━━━━━━━\n`;
+    `⏱️ Total Time: ${Math.floor(totalTime / 60)}m ${totalTime % 60}s\n` +
+    `⚡ Avg per Question: ${avgTime}s\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📚 PERFORMANCE BY DIFFICULTY\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   Object.entries(byDifficulty).forEach(([level, stats]) => {
     if (stats.total > 0) {
       const emoji = level === "easy" ? "🟢" : level === "medium" ? "🟡" : "🔴";
       const percent = Math.round((stats.correct / stats.total) * 100);
+      const bar =
+        "█".repeat(Math.floor(percent / 10)) +
+        "░".repeat(10 - Math.floor(percent / 10));
       resultMessage += `${emoji} ${level.toUpperCase()}: ${stats.correct}/${
         stats.total
-      } (${percent}%)\n`;
+      }\n`;
+      resultMessage += `   ${bar} ${percent}%\n\n`;
     }
   });
 
-  resultMessage += `\n📝 DETAILED RESULTS\n━━━━━━━━━━━━━━━━━━\n`;
+  resultMessage +=
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+    `📝 QUESTION BREAKDOWN\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
   session.results.forEach((result, index) => {
     const emoji = result.isCorrect ? "✅" : "❌";
     const status =
       result.userAnswer === "SKIPPED"
-        ? "⏭️ SKIPPED"
+        ? "⏭️ Skipped"
         : result.userAnswer === "TIME OUT"
-        ? "⏰ TIME OUT"
+        ? "⏰ Timeout"
         : result.isCorrect
         ? "Correct"
         : "Incorrect";
 
+    const diffEmoji =
+      result.question.difficulty === "easy"
+        ? "🟢"
+        : result.question.difficulty === "medium"
+        ? "🟡"
+        : "🔴";
+
     resultMessage +=
-      `\n${index + 1}. ${emoji} ${status} (${result.timeTaken}s)\n` +
-      `   ${result.question.question.substring(0, 60)}${
-        result.question.question.length > 60 ? "..." : ""
+      `\n${index + 1}. ${emoji} ${status} (${
+        result.timeTaken
+      }s) ${diffEmoji}\n` +
+      `   ${result.question.question.substring(0, 65)}${
+        result.question.question.length > 65 ? "..." : ""
       }\n`;
   });
 
-  resultMessage += `\n━━━━━━━━━━━━━━━━━━\n`;
+  resultMessage += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
-  // Performance message
-  if (percentage >= 80) {
-    resultMessage += `\n🏆 Excellent work! You're doing great!`;
+  // Performance feedback with tips
+  if (percentage >= 90) {
+    resultMessage +=
+      `\n🏆 OUTSTANDING!\n` +
+      `You're absolutely crushing it! You have a strong understanding of ${session.topicName}.\n` +
+      `💡 Tip: Challenge yourself with harder topics or teach others!`;
+  } else if (percentage >= 80) {
+    resultMessage +=
+      `\n🥇 EXCELLENT WORK!\n` +
+      `Great performance! You have a solid grasp of ${session.topicName}.\n` +
+      `💡 Tip: Review the questions you missed to reach 90%+!`;
+  } else if (percentage >= 70) {
+    resultMessage +=
+      `\n🥈 GOOD JOB!\n` +
+      `You're doing well! Keep practicing ${session.topicName}.\n` +
+      `💡 Tip: Focus on medium and hard difficulty questions.`;
   } else if (percentage >= 60) {
-    resultMessage += `\n👍 Good job! Keep practicing!`;
+    resultMessage +=
+      `\n🥉 NOT BAD!\n` +
+      `You're making progress! More practice will help.\n` +
+      `💡 Tip: Review the correct answers and try /topic ${session.topicName} for practice.`;
   } else {
-    resultMessage += `\n💪 Keep learning! Practice makes perfect!`;
+    resultMessage +=
+      `\n💪 KEEP LEARNING!\n` +
+      `Everyone starts somewhere! Don't give up.\n` +
+      `💡 Tip: Use /topic ${session.topicName} to study, then retry the interview!`;
   }
 
-  resultMessage += `\n\nStart a new interview with /mockinterview <topic>`;
+  resultMessage +=
+    `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `🔄 Try again: /mockinterview ${session.topicName}\n` +
+    `📚 Practice mode: /topic ${session.topicName}\n` +
+    `🏠 Main menu: /start`;
 
   await ctx.reply(resultMessage);
 }

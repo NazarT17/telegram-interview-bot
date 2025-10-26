@@ -7,9 +7,11 @@ export async function topicCommand(ctx: CommandContext<Context>) {
   if (!topicName) {
     const topics = dataService.getAllTopicNames();
     return ctx.reply(
-      `Please specify a topic.\n\nAvailable topics:\n${topics
-        .map((t) => `• ${t}`)
-        .join("\n")}\n\nExample: /topic playwright`
+      `⚠️ Please specify a topic!\n\n` +
+        `📚 Available topics:\n${topics
+          .map((t) => `  • ${t}`)
+          .join("\n")}\n\n` +
+        `💡 Example: /topic playwright`
     );
   }
 
@@ -17,7 +19,8 @@ export async function topicCommand(ctx: CommandContext<Context>) {
 
   if (!question) {
     return ctx.reply(
-      `❌ Topic "${topicName}" not found. Use /topics to see available topics.`
+      `❌ Topic "${topicName}" not found.\n\n` +
+        `Use /topics to see all available topics.`
     );
   }
 
@@ -28,18 +31,27 @@ export async function topicCommand(ctx: CommandContext<Context>) {
   };
 
   const message = `
+📚 Topic: ${topicName.toUpperCase()}
 ${
   difficultyEmoji[question.difficulty]
 } Difficulty: ${question.difficulty.toUpperCase()}
 
-❓ Question:
+━━━━━━━━━━━━━━━━━━
+
+❓ QUESTION:
+
 ${question.question}
 
-💡 Answer:
+━━━━━━━━━━━━━━━━━━
+
+💡 ANSWER:
+
 ${question.answer}
 
----
-Want another? Try /topic ${topicName} again!
+━━━━━━━━━━━━━━━━━━
+
+🔄 Get another question: /topic ${topicName}
+🔥 Start mock interview: /mockinterview ${topicName}
   `;
 
   await ctx.reply(message);
