@@ -444,6 +444,13 @@ export async function handleAnswerSelection(
     `next_test_question_${userId}`
   );
 
+  // Edit the original message to remove buttons and show selected answer
+  try {
+    await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: [] } });
+  } catch (error) {
+    // Ignore if message can't be edited
+  }
+
   await ctx.reply(feedbackMessage, { reply_markup: keyboard });
   await ctx.answerCallbackQuery();
 }

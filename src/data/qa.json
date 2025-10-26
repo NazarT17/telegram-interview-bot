@@ -160,6 +160,167 @@
         "techniques",
         "test-design"
       ]
+    },
+    {
+      "id": 11,
+      "question": "What is smoke testing and when should it be performed?",
+      "answer": "Smoke testing: Quick shallow tests to verify basic functionality. When: After each build, before deeper testing. Purpose: Ensure build is stable enough for further testing. Example: Can app launch? Can user login? 15-30 min tests. Also called 'build verification testing'. Saves time by catching critical issues early.",
+      "options": [
+        "Testing in smoky environments",
+        "Quick shallow tests after each build to verify stability",
+        "Testing fire alarm systems"
+      ],
+      "correctOption": 1,
+      "difficulty": "easy",
+      "tags": [
+        "smoke-testing",
+        "build-verification"
+      ]
+    },
+    {
+      "id": 12,
+      "question": "Explain equivalence partitioning technique.",
+      "answer": "Equivalence partitioning: Dividing inputs into groups (partitions) that should behave similarly. Test one value from each partition. Example: age input - valid (18-65), too young (<18), too old (>65). Reduces test cases while maintaining coverage. Efficient test design technique.",
+      "options": [
+        "Dividing team members equally",
+        "Grouping similar inputs and testing one per group",
+        "Creating identical test cases"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "test-design",
+        "equivalence-partitioning"
+      ]
+    },
+    {
+      "id": 13,
+      "question": "What is the purpose of a test plan?",
+      "answer": "Test plan documents testing strategy and approach. Includes: 1) Scope (what to test), 2) Resources (who, tools), 3) Schedule, 4) Test approach/strategy, 5) Entry/exit criteria, 6) Risks. Benefits: Alignment, planning, communication. Living document updated throughout project.",
+      "options": [
+        "A document listing all test cases",
+        "Strategy document with scope, approach, resources, schedule",
+        "Emergency backup plan for testing"
+      ],
+      "correctOption": 1,
+      "difficulty": "easy",
+      "tags": [
+        "test-planning",
+        "documentation"
+      ]
+    },
+    {
+      "id": 14,
+      "question": "What is exploratory testing and when is it valuable?",
+      "answer": "Exploratory testing: Simultaneous learning, test design, and execution. No predefined scripts. Tester explores like end user. Valuable for: 1) Finding unexpected bugs, 2) New features, 3) Time constraints, 4) Supplementing scripted tests. Requires experienced testers. Charter-based sessions for structure.",
+      "options": [
+        "Testing in different countries",
+        "Simultaneous learning and testing without scripts",
+        "Testing new exploration features"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "exploratory-testing",
+        "manual-testing"
+      ]
+    },
+    {
+      "id": 15,
+      "question": "What is the difference between verification and validation?",
+      "answer": "Verification: Are we building the product right? (Meets specifications). Methods: Reviews, inspections, static testing. Validation: Are we building the right product? (Meets user needs). Methods: Testing, UAT. Example: Verification checks code follows design, validation checks design solves user problem.",
+      "options": [
+        "They mean the same thing",
+        "Verification = built right, Validation = right product",
+        "Verification is automated, validation is manual"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "verification",
+        "validation"
+      ]
+    },
+    {
+      "id": 16,
+      "question": "What is shift-left testing?",
+      "answer": "Shift-left: Moving testing earlier in SDLC. Start testing in requirements/design phase, not just after coding. Benefits: 1) Find bugs earlier (cheaper to fix), 2) Better quality, 3) Faster delivery. Practices: Unit testing, TDD, early automation, involving QA in planning. Prevention over detection.",
+      "options": [
+        "Testing on left side of screen",
+        "Moving testing earlier in development lifecycle",
+        "Testing with left-handed developers"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": [
+        "shift-left",
+        "strategy"
+      ]
+    },
+    {
+      "id": 17,
+      "question": "What is continuous testing in DevOps/CI/CD?",
+      "answer": "Continuous testing: Automated tests executed throughout CI/CD pipeline. Every code commit triggers tests. Includes: Unit, integration, E2E, performance tests. Benefits: 1) Fast feedback, 2) Catch issues early, 3) Safe deployments, 4) Quality gates. Integrated with tools like Jenkins, GitLab CI, GitHub Actions.",
+      "options": [
+        "Testing 24/7 manually",
+        "Automated tests in CI/CD pipeline for every commit",
+        "Never stopping test execution"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "continuous-testing",
+        "CI-CD",
+        "DevOps"
+      ]
+    },
+    {
+      "id": 18,
+      "question": "What is mutation testing?",
+      "answer": "Mutation testing: Testing the tests. Introduce small code changes (mutations) - if tests still pass, they're inadequate. Example: Change + to -, if tests pass, they're not checking correctly. Measures test effectiveness, not just coverage. Tools: Stryker, PIT. Computationally expensive but powerful.",
+      "options": [
+        "Testing genetic algorithms",
+        "Testing tests by introducing code mutations",
+        "Testing database migrations"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": [
+        "mutation-testing",
+        "test-quality"
+      ]
+    },
+    {
+      "id": 19,
+      "question": "What is the purpose of acceptance testing (UAT)?",
+      "answer": "UAT (User Acceptance Testing): Final testing by actual users/stakeholders. Validates: Does it meet business requirements? Is it usable? When: After system testing, before production. Goal: Get user approval for release. Different from QA testing - focuses on business value, not technical correctness.",
+      "options": [
+        "Testing user login functionality",
+        "Final testing by users to validate business requirements",
+        "Testing all features are accepted"
+      ],
+      "correctOption": 1,
+      "difficulty": "easy",
+      "tags": [
+        "UAT",
+        "acceptance-testing"
+      ]
+    },
+    {
+      "id": 20,
+      "question": "What is the difference between sanity and smoke testing?",
+      "answer": "SMOKE: Broad & shallow, tests major functions, after every build, determines if build is testable. SANITY: Narrow & deep, tests specific functionality after bug fixes/changes, subset of regression. Example: Smoke checks app launches; Sanity verifies login bug fix works. Both are quick, subset tests.",
+      "options": [
+        "They are the same thing",
+        "Smoke is broad after builds, Sanity is narrow after fixes",
+        "Sanity is automated, smoke is manual"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "smoke-testing",
+        "sanity-testing"
+      ]
     }
   ]
 }

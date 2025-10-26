@@ -161,6 +161,166 @@
         "authentication",
         "performance"
       ]
+    },
+    {
+      "id": 11,
+      "question": "What is the purpose of page.waitForLoadState() in Playwright?",
+      "answer": "page.waitForLoadState() waits for specific load state. States: 1) 'load' - full page load, 2) 'domcontentloaded' - DOM ready, 3) 'networkidle' - no network activity for 500ms. Example: await page.waitForLoadState('networkidle'); Useful after navigation or waiting for AJAX requests. Auto-wait usually handles this.",
+      "options": [
+        "Waits for page to fully load",
+        "Waits for specific load states (load/domcontentloaded/networkidle)",
+        "Waits for loading animations"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "waiting",
+        "page-lifecycle"
+      ]
+    },
+    {
+      "id": 12,
+      "question": "How do you run tests in different browsers with Playwright?",
+      "answer": "Configure in playwright.config.ts with projects array. Example: projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] }}, { name: 'webkit' }]. Run with: npx playwright test --project=webkit. Supports: Chromium, Firefox, WebKit (Safari). Can also configure mobile devices, viewports.",
+      "options": [
+        "Install separate test frameworks",
+        "Configure projects in playwright.config.ts",
+        "Change browser in each test file"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "configuration",
+        "cross-browser"
+      ]
+    },
+    {
+      "id": 13,
+      "question": "What are Playwright's built-in assertions and how do they differ from expect()?",
+      "answer": "Playwright has web-first assertions: expect(locator).toBeVisible(), toHaveText(), toBeEnabled(), etc. They auto-wait and retry until timeout. Different from basic expect(): 1) Auto-retry, 2) Better error messages, 3) Handle async automatically. Example: await expect(page.locator('h1')).toHaveText('Welcome');",
+      "options": [
+        "No difference from regular expect()",
+        "Web-first assertions with auto-retry and auto-wait",
+        "Only for DOM assertions"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "assertions",
+        "testing"
+      ]
+    },
+    {
+      "id": 14,
+      "question": "How do you handle iframes in Playwright?",
+      "answer": "Use page.frameLocator() for modern approach. Example: await page.frameLocator('iframe#myframe').locator('button').click(); Or legacy: const frame = page.frame({ name: 'frameName' }). frameLocator is recommended - works with auto-waiting, better for nested iframes, more reliable.",
+      "options": [
+        "Switch to iframe context like Selenium",
+        "Use page.frameLocator() for modern approach",
+        "Iframes are not supported"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": [
+        "iframes",
+        "locators"
+      ]
+    },
+    {
+      "id": 15,
+      "question": "What is Playwright's trace viewer and when should you use it?",
+      "answer": "Trace viewer is a debugging tool that records test execution. Shows: screenshots, DOM snapshots, network, console, actions timeline. Enable with: await context.tracing.start(). View: npx playwright show-trace trace.zip. Use for: debugging failures, CI investigations, understanding test behavior. Powerful for post-mortem analysis.",
+      "options": [
+        "A code coverage tool",
+        "Debugging tool showing test execution timeline and snapshots",
+        "A performance profiler"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "debugging",
+        "tracing"
+      ]
+    },
+    {
+      "id": 16,
+      "question": "How do you handle downloads in Playwright?",
+      "answer": "Listen for download event: const download = await page.waitForEvent('download'); await button.click(); Save: await download.saveAs('path/to/save'); Get info: download.suggestedFilename(). Can also use download.path() for temp location. Playwright handles download automatically without browser prompts.",
+      "options": [
+        "Configure browser download settings",
+        "Use waitForEvent('download') and saveAs()",
+        "Downloads are not supported"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "downloads",
+        "file-handling"
+      ]
+    },
+    {
+      "id": 17,
+      "question": "What is the purpose of test.use() in Playwright?",
+      "answer": "test.use() shares configuration or fixtures within a test file. Example: test.use({ viewport: { width: 1280, height: 720 }}); Applies to all tests in scope. Can also use for custom fixtures. Alternative to repeating config in every test. Scoped to describe block if used within one.",
+      "options": [
+        "Imports test utilities",
+        "Shares configuration/fixtures within test scope",
+        "Declares test dependencies"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": [
+        "configuration",
+        "fixtures"
+      ]
+    },
+    {
+      "id": 18,
+      "question": "How do you test geolocation and permissions in Playwright?",
+      "answer": "Set in context options: await browser.newContext({ geolocation: { latitude: 51.5074, longitude: -0.1278 }, permissions: ['geolocation'] }). Can also use context.setGeolocation() and context.grantPermissions(). Useful for testing location-based features, camera access, notifications, etc.",
+      "options": [
+        "Not possible in Playwright",
+        "Set geolocation and permissions in context options",
+        "Only works with Chrome"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": [
+        "geolocation",
+        "permissions"
+      ]
+    },
+    {
+      "id": 19,
+      "question": "What are Playwright's locator strategies and which is most recommended?",
+      "answer": "Strategies: 1) Role-based (recommended): getByRole(), 2) Text: getByText(), 3) Label: getByLabel(), 4) Placeholder: getByPlaceholder(), 5) Test ID: getByTestId(), 6) CSS/XPath. Recommendation: Use role-based for accessibility, test IDs for dynamic content. Avoid CSS/XPath unless necessary - brittle.",
+      "options": [
+        "Only CSS and XPath",
+        "Role-based, text, label, test ID (role-based recommended)",
+        "ID and class name only"
+      ],
+      "correctOption": 1,
+      "difficulty": "easy",
+      "tags": [
+        "locators",
+        "best-practices"
+      ]
+    },
+    {
+      "id": 20,
+      "question": "How do you handle popup windows and new tabs in Playwright?",
+      "answer": "Listen for popup event: const [popup] = await Promise.all([page.waitForEvent('popup'), page.click('a[target=\"_blank\"]')]); Then interact: await popup.locator('h1').textContent(). Playwright tracks all pages, no need to switch contexts. Can also use page.context().pages() to get all pages.",
+      "options": [
+        "Switch window handles like Selenium",
+        "Use waitForEvent('popup') and get new page reference",
+        "Popups are blocked in Playwright"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": [
+        "popups",
+        "multi-page"
+      ]
     }
   ]
 }

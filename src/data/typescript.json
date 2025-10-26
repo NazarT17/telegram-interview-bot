@@ -122,7 +122,7 @@
     {
       "id": 10,
       "question": "What is the difference between 'const' and 'readonly'?",
-      "answer": "const - for variables, prevents reassignment. readonly - for properties, prevents modification after initialization. const x = [1,2]; x.push(3); // OK. interface Props { readonly items: number[]; } props.items.push(3); // Error. Use const for variables, readonly for object properties.",
+      "answer": "'const' - for variables, prevents reassignment. 'readonly' - for properties, prevents modification after initialization. const x = [1,2]; x.push(3); // OK. interface Props { readonly items: number[]; } props.items.push(3); // Error. Use const for variables, readonly for object properties.",
       "options": [
         "They are the same thing",
         "'const' for variables, 'readonly' for properties",
@@ -131,6 +131,137 @@
       "correctOption": 1,
       "difficulty": "medium",
       "tags": ["const", "readonly", "immutability"]
+    },
+    {
+      "id": 11,
+      "question": "What are conditional types in TypeScript?",
+      "answer": "Conditional types select types based on conditions. Syntax: T extends U ? X : Y. Example: type IsString<T> = T extends string ? true : false. Useful for: 1) Type filtering, 2) Building complex utility types, 3) Creating type-safe APIs. Built-in examples: Exclude, Extract, NonNullable.",
+      "options": [
+        "Types that depend on runtime conditions",
+        "Types that select based on type conditions (T extends U ? X : Y)",
+        "Types for if-else statements only"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": ["conditional-types", "advanced"]
+    },
+    {
+      "id": 12,
+      "question": "Explain the 'keyof' operator in TypeScript.",
+      "answer": "'keyof' creates a union of all property names (keys) of a type. Example: interface User { name: string; age: number; } type UserKeys = keyof User; // 'name' | 'age'. Used for: 1) Type-safe property access, 2) Mapped types, 3) Index signatures. Often combined with generics.",
+      "options": [
+        "Gets the values of an object",
+        "Creates a union of all property names of a type",
+        "Checks if a key exists in an object"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": ["keyof", "utility-operators"]
+    },
+    {
+      "id": 13,
+      "question": "What is the purpose of 'declare' keyword in TypeScript?",
+      "answer": "'declare' tells TypeScript a variable/function exists elsewhere (no implementation). Uses: 1) Ambient declarations (.d.ts files), 2) Declaring global variables, 3) Third-party library types. Example: declare const API_URL: string; Used for type checking without runtime code.",
+      "options": [
+        "Declares a new variable",
+        "Tells TypeScript something exists elsewhere (ambient declarations)",
+        "Makes variables public"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": ["declare", "ambient"]
+    },
+    {
+      "id": 14,
+      "question": "What are TypeScript decorators and when would you use them?",
+      "answer": "Decorators are special functions that modify classes, methods, properties, or parameters at design time. Uses: 1) Metadata (Angular, NestJS), 2) Validation, 3) Logging, 4) Dependency injection. Example: @Component, @Injectable. Syntax: @decorator class MyClass {}. Note: Still experimental, enable with experimentalDecorators.",
+      "options": [
+        "Functions that add styling to components",
+        "Special functions that modify classes/methods at design time",
+        "A way to comment your code"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": ["decorators", "metadata", "experimental"]
+    },
+    {
+      "id": 15,
+      "question": "What is 'strictNullChecks' in TypeScript?",
+      "answer": "'strictNullChecks' is a compiler option that prevents null/undefined from being assigned to non-nullable types. When enabled: 1) Must explicitly allow null (string | null), 2) Prevents 'Cannot read property of undefined' errors, 3) Safer code. Example: let x: string; x = null; // Error with strictNullChecks.",
+      "options": [
+        "A runtime check for null values",
+        "Compiler option preventing null/undefined in non-nullable types",
+        "A function that removes null from arrays"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": ["compiler-options", "null-safety"]
+    },
+    {
+      "id": 16,
+      "question": "Explain type assertion in TypeScript and its syntax.",
+      "answer": "Type assertion tells TypeScript to treat a value as a specific type (like type casting). Two syntaxes: 1) angle-bracket: <Type>value, 2) as: value as Type. Example: let len = (input as string).length; Use when you know more than TypeScript. Note: Doesn't perform runtime conversion, just compile-time.",
+      "options": [
+        "A way to convert types at runtime",
+        "Telling TypeScript to treat a value as a specific type",
+        "Testing if a variable is a certain type"
+      ],
+      "correctOption": 1,
+      "difficulty": "easy",
+      "tags": ["type-assertion", "casting"]
+    },
+    {
+      "id": 17,
+      "question": "What is the 'infer' keyword in TypeScript?",
+      "answer": "'infer' is used within conditional types to extract/infer types. Example: type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never; Extracts return type of function. Uses: 1) Type extraction, 2) Building advanced utility types, 3) Pattern matching on types.",
+      "options": [
+        "Makes TypeScript guess types automatically",
+        "Extracts/infers types within conditional types",
+        "A debugging keyword"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": ["infer", "conditional-types", "advanced"]
+    },
+    {
+      "id": 18,
+      "question": "What are index signatures in TypeScript?",
+      "answer": "Index signatures define types for dynamic property names. Syntax: { [key: string]: Type }. Example: interface StringMap { [key: string]: string; } Allows: obj['anyKey']. Uses: 1) Dictionaries, 2) Dynamic objects, 3) Flexible APIs. Can use string, number, or symbol as index type.",
+      "options": [
+        "Ways to index arrays",
+        "Types for dynamic property names { [key: string]: Type }",
+        "Performance optimization for lookups"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": ["index-signatures", "dynamic-types"]
+    },
+    {
+      "id": 19,
+      "question": "What is the difference between 'enum' and 'const enum' in TypeScript?",
+      "answer": "enum - generates JavaScript object code. const enum - fully erased at runtime, replaced with literal values (more efficient). Example: const enum Status { Active = 1 }. let s = Status.Active; // compiles to: let s = 1. Use const enum for performance, regular enum when you need runtime object.",
+      "options": [
+        "No difference, they're aliases",
+        "'const enum' is erased at runtime, regular enum generates JS code",
+        "'const enum' can only have constant values"
+      ],
+      "correctOption": 1,
+      "difficulty": "medium",
+      "tags": ["enum", "const-enum", "performance"]
+    },
+    {
+      "id": 20,
+      "question": "What are template literal types in TypeScript?",
+      "answer": "Template literal types create new string literal types by combining existing ones. Syntax: type Greeting = `Hello ${Name}`; Example: type HttpMethod = 'GET' | 'POST'; type Endpoint = `/api/${HttpMethod}`; Uses: 1) Type-safe strings, 2) Building URL types, 3) Event names. TypeScript 4.1+ feature.",
+      "options": [
+        "String templates for HTML",
+        "New string literal types by combining existing ones",
+        "Functions that return template strings"
+      ],
+      "correctOption": 1,
+      "difficulty": "hard",
+      "tags": ["template-literals", "string-types", "advanced"]
     }
   ]
 }
+
