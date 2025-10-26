@@ -29,6 +29,48 @@
       "answer": "'unknown' is type-safe version of 'any'. With 'any', you can do anything (no checks). With 'unknown', you must narrow the type before use (type guards). Example: let val: unknown; if (typeof val === 'string') { val.toUpperCase(); } Use 'unknown' instead of 'any' for better safety.",
       "difficulty": "hard",
       "tags": ["types", "safety"]
+    },
+    {
+      "id": 5,
+      "question": "What are TypeScript utility types? Give examples.",
+      "answer": "Utility types transform existing types. Common ones: 1) Partial<T> - makes all properties optional, 2) Required<T> - makes all required, 3) Pick<T, K> - selects specific properties, 4) Omit<T, K> - excludes properties, 5) Record<K, T> - creates object type. Example: Partial<User> allows all User fields to be optional.",
+      "difficulty": "medium",
+      "tags": ["utility-types", "advanced"]
+    },
+    {
+      "id": 6,
+      "question": "Explain TypeScript's 'never' type and when to use it.",
+      "answer": "'never' represents values that never occur. Uses: 1) Functions that never return (throw errors, infinite loops), 2) Exhaustive type checking, 3) Unreachable code. Example: function error(msg: string): never { throw new Error(msg); } Also used in conditional types to filter out unwanted cases.",
+      "difficulty": "hard",
+      "tags": ["types", "advanced"]
+    },
+    {
+      "id": 7,
+      "question": "What is type narrowing in TypeScript?",
+      "answer": "Type narrowing is refining types to more specific ones using type guards. Methods: 1) typeof checks, 2) instanceof, 3) in operator, 4) Custom type guards with 'is'. Example: if (typeof x === 'string') { x.toUpperCase(); } TypeScript knows x is string inside the block.",
+      "difficulty": "medium",
+      "tags": ["type-guards", "narrowing"]
+    },
+    {
+      "id": 8,
+      "question": "What are mapped types in TypeScript?",
+      "answer": "Mapped types create new types by transforming properties of existing types. Syntax: { [K in keyof T]: NewType }. Example: type Readonly<T> = { readonly [K in keyof T]: T[K]; }. Useful for creating variations like making all properties optional, readonly, or nullable.",
+      "difficulty": "hard",
+      "tags": ["mapped-types", "advanced"]
+    },
+    {
+      "id": 9,
+      "question": "Explain the 'readonly' modifier in TypeScript.",
+      "answer": "readonly makes properties immutable after initialization. Can be used on: 1) Interface/type properties, 2) Array (ReadonlyArray<T>), 3) Class properties. Example: interface Point { readonly x: number; } Once set, x cannot be changed. Use for immutability and preventing accidental modifications.",
+      "difficulty": "easy",
+      "tags": ["modifiers", "immutability"]
+    },
+    {
+      "id": 10,
+      "question": "What is the difference between 'const' and 'readonly'?",
+      "answer": "const - for variables, prevents reassignment. readonly - for properties, prevents modification after initialization. const x = [1,2]; x.push(3); // OK. interface Props { readonly items: number[]; } props.items.push(3); // Error. Use const for variables, readonly for object properties.",
+      "difficulty": "medium",
+      "tags": ["const", "readonly", "immutability"]
     }
   ]
 }

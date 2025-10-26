@@ -7,35 +7,100 @@
       "question": "What is Playwright and what makes it different from Selenium?",
       "answer": "Playwright is a modern end-to-end testing framework by Microsoft. Key differences: 1) Auto-wait mechanism (waits for elements automatically), 2) Supports multiple browsers with single API, 3) Better handling of modern web apps (SPAs), 4) Built-in network interception, 5) Faster execution with parallel testing.",
       "difficulty": "easy",
-      "tags": ["basics", "comparison"]
+      "tags": [
+        "basics",
+        "comparison"
+      ]
     },
     {
       "id": 2,
       "question": "Explain the difference between page.click() and page.locator().click() in Playwright.",
       "answer": "page.click(selector) is the legacy method that immediately searches for element. page.locator(selector).click() is the modern approach using locators - it's lazy (doesn't search until action), has auto-waiting, better error messages, and is more reliable for dynamic content.",
       "difficulty": "medium",
-      "tags": ["locators", "best-practices"]
+      "tags": [
+        "locators",
+        "best-practices"
+      ]
     },
     {
       "id": 3,
       "question": "How do you handle file uploads in Playwright?",
       "answer": "Use page.setInputFiles(selector, filePath) or locator.setInputFiles(). For multiple files: pass an array. To remove files: pass empty array. Example: await page.locator('input[type=\"file\"]').setInputFiles('path/to/file.pdf');",
       "difficulty": "medium",
-      "tags": ["file-handling", "interactions"]
+      "tags": [
+        "file-handling",
+        "interactions"
+      ]
     },
     {
       "id": 4,
       "question": "What are Playwright fixtures and why are they useful?",
       "answer": "Fixtures are a way to establish test environment and share setup/teardown logic. They provide: 1) Automatic setup/cleanup, 2) Dependency injection, 3) Composability, 4) Isolation between tests. Example: custom 'authenticatedPage' fixture that logs in before each test.",
       "difficulty": "hard",
-      "tags": ["fixtures", "test-organization"]
+      "tags": [
+        "fixtures",
+        "test-organization"
+      ]
     },
     {
       "id": 5,
-      "question": "How would you test a scenario that requires multiple browser contexts?",
-      "answer": "Use browser.newContext() to create isolated contexts. Each context has its own cookies, storage, and cache. Example: const context1 = await browser.newContext(); const context2 = await browser.newContext(); Useful for testing multi-user scenarios or different permission levels.",
+      "question": "How do you handle multiple browser contexts in Playwright?",
+      "answer": "Browser contexts are isolated environments (like incognito). Create with browser.newContext(). Uses: 1) Multi-user scenarios, 2) Different permissions/locales, 3) Test isolation. Example: const context1 = await browser.newContext(); const page1 = await context1.newPage(); Each context has separate cookies/storage.",
+      "difficulty": "medium",
+      "tags": [
+        "contexts",
+        "isolation"
+      ]
+    },
+    {
+      "id": 6,
+      "question": "What is the purpose of test.describe.configure() in Playwright?",
+      "answer": "test.describe.configure() sets options for a test suite. Common configs: 1) mode: 'parallel' or 'serial', 2) retries, 3) timeout. Example: test.describe.configure({ mode: 'serial' }); makes tests run sequentially. Use for tests that can't run in parallel (share state, database).",
+      "difficulty": "medium",
+      "tags": [
+        "configuration",
+        "test-organization"
+      ]
+    },
+    {
+      "id": 7,
+      "question": "How do you intercept and mock network requests in Playwright?",
+      "answer": "Use page.route() to intercept. Methods: 1) route.fulfill() - mock response, 2) route.continue() - modify and continue, 3) route.abort() - block request. Example: await page.route('**/api/users', route => route.fulfill({ json: mockData })); Useful for testing edge cases, offline mode.",
       "difficulty": "hard",
-      "tags": ["contexts", "advanced"]
+      "tags": [
+        "mocking",
+        "network"
+      ]
+    },
+    {
+      "id": 8,
+      "question": "Explain Playwright's auto-waiting mechanism.",
+      "answer": "Playwright automatically waits for elements to be actionable before performing actions. Checks: 1) Attached to DOM, 2) Visible, 3) Stable (not animating), 4) Receives events, 5) Enabled. Default timeout: 30s. Reduces flaky tests from manual waits. Can customize with { timeout } option.",
+      "difficulty": "easy",
+      "tags": [
+        "auto-wait",
+        "stability"
+      ]
+    },
+    {
+      "id": 9,
+      "question": "What are the benefits of using Playwright's codegen tool?",
+      "answer": "Codegen (playwright codegen) records browser interactions and generates test code. Benefits: 1) Quick test creation, 2) Learns selectors, 3) Generates in multiple languages, 4) Shows Playwright Inspector. Great for: beginners, quick prototypes, finding selectors. Still need to refactor generated code for maintainability.",
+      "difficulty": "easy",
+      "tags": [
+        "codegen",
+        "tools"
+      ]
+    },
+    {
+      "id": 10,
+      "question": "How do you handle authentication in Playwright tests efficiently?",
+      "answer": "Best practice: Authenticate once, reuse session. Methods: 1) Save storage state: await context.storageState({ path: 'auth.json' }), 2) Reuse: await browser.newContext({ storageState: 'auth.json' }). Avoid logging in for every test. Can also use API calls for auth. Saves time and reduces flakiness.",
+      "difficulty": "hard",
+      "tags": [
+        "authentication",
+        "performance"
+      ]
     }
   ]
 }
