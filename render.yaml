@@ -1,7 +1,7 @@
 services:
   - type: worker
     name: telegram-interview-bot
-    runtime: node
+    env: node
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
