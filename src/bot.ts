@@ -99,6 +99,51 @@ ${
 ${question.question}
 
 ━━━━━━━━━━━━━━━━━━
+  `;
+
+  const keyboard = new InlineKeyboard()
+    .text("💡 Show Answer", `answer_${question.id}_${topic}`)
+    .row()
+    .text("🔄 Another Question", `practice_${topic}`)
+    .row()
+    .text("🔥 Start Test", `test_${topic}`)
+    .text("🏠 Home", "back_to_start");
+
+  await ctx.reply(message, { reply_markup: keyboard });
+});
+
+// Handle show answer button
+bot.callbackQuery(/^answer_(\d+)_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const questionId = parseInt(ctx.match[1]);
+  const topic = ctx.match[2];
+
+  const topicData = dataService.getTopic(topic);
+  const question = topicData?.questions.find((q) => q.id === questionId);
+
+  if (!question) {
+    return ctx.reply("❌ Question not found.");
+  }
+
+  const difficultyEmoji = {
+    easy: "🟢",
+    medium: "🟡",
+    hard: "🔴",
+  };
+
+  const message = `
+📚 Topic: ${topic.toUpperCase()}
+${
+  difficultyEmoji[question.difficulty]
+} Difficulty: ${question.difficulty.toUpperCase()}
+
+━━━━━━━━━━━━━━━━━━
+
+❓ QUESTION:
+
+${question.question}
+
+━━━━━━━━━━━━━━━━━━
 
 💡 ANSWER:
 
@@ -113,7 +158,7 @@ ${question.answer}
     .text("🔥 Start Test", `test_${topic}`)
     .text("🏠 Home", "back_to_start");
 
-  await ctx.reply(message, { reply_markup: keyboard });
+  await ctx.editMessageText(message, { reply_markup: keyboard });
 });
 
 // Handle test mode topic selection
