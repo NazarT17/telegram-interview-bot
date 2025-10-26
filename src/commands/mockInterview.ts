@@ -234,11 +234,15 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
 }
 
 async function showTestResults(ctx: Context, session: MockInterviewState) {
-  const totalQuestions = session.results.length;
-  const correctAnswers = session.results.filter((r) => r.isCorrect).length;
-  const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const totalQuestions = session.questions.length;
+  const correctAnswers = session.correctAnswers;
+  const percentage =
+    totalQuestions > 0
+      ? Math.round((correctAnswers / totalQuestions) * 100)
+      : 0;
   const totalTime = Math.floor((Date.now() - session.startTime) / 1000);
-  const avgTime = Math.floor(totalTime / totalQuestions);
+  const avgTime =
+    totalQuestions > 0 ? Math.floor(totalTime / totalQuestions) : 0;
 
   // Calculate by difficulty
   const byDifficulty = {
@@ -247,10 +251,13 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
     hard: { correct: 0, total: 0 },
   };
 
-  session.results.forEach((result) => {
-    const diff = result.question.difficulty;
+  session.questions.forEach((question, index) => {
+    const diff = question.difficulty;
     byDifficulty[diff].total++;
-    if (result.isCorrect) {
+
+    // Check if this question was answered correctly
+    const userAnswer = session.answers[index];
+    if (userAnswer !== undefined && userAnswer === question.correctOption) {
       byDifficulty[diff].correct++;
     }
   });
@@ -299,30 +306,29 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
     `📝 QUESTION BREAKDOWN\n` +
     `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
-  session.results.forEach((result, index) => {
-    const emoji = result.isCorrect ? "✅" : "❌";
+  session.questions.forEach((question, index) => {
+    const userAnswer = session.answers[index];
+    const isCorrect =
+      userAnswer !== undefined && userAnswer === question.correctOption;
+    const emoji = isCorrect ? "✅" : "❌";
     const status =
-      result.userAnswer === "SKIPPED"
+      userAnswer === undefined
         ? "⏭️ Skipped"
-        : result.userAnswer === "TIME OUT"
-        ? "⏰ Timeout"
-        : result.isCorrect
+        : isCorrect
         ? "Correct"
         : "Incorrect";
 
     const diffEmoji =
-      result.question.difficulty === "easy"
+      question.difficulty === "easy"
         ? "🟢"
-        : result.question.difficulty === "medium"
+        : question.difficulty === "medium"
         ? "🟡"
         : "🔴";
 
     resultMessage +=
-      `\n${index + 1}. ${emoji} ${status} (${
-        result.timeTaken
-      }s) ${diffEmoji}\n` +
-      `   ${result.question.question.substring(0, 65)}${
-        result.question.question.length > 65 ? "..." : ""
+      `\n${index + 1}. ${emoji} ${status} ${diffEmoji}\n` +
+      `   ${question.question.substring(0, 65)}${
+        question.question.length > 65 ? "..." : ""
       }\n`;
   });
 
