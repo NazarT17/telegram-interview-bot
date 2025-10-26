@@ -31,21 +31,24 @@ export async function startMockInterview(ctx: Context, topicName: string) {
     startTime: Date.now(),
     questionStartTime: Date.now(),
     timeLimit: QUESTION_TIME_LIMIT,
+    answers: new Array(selectedQuestions.length).fill(undefined),
+    correctAnswers: 0,
   });
 
   await ctx.reply(
     `🎯 MOCK INTERVIEW STARTED!\n\n` +
-      `━━━━━━━━━━━━━━━━━━\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
       `📚 Topic: ${topicName.toUpperCase()}\n` +
-      `📝 Questions: ${selectedQuestions.length}\n` +
-      `⏱️ Time limit: ${QUESTION_TIME_LIMIT} seconds per question\n` +
-      `━━━━━━━━━━━━━━━━━━\n\n` +
-      `📌 Instructions:\n` +
-      `  • Select the correct answer from 3 options\n` +
-      `  • Each question has only 1 correct answer\n` +
-      `  • Click the button to submit your choice\n\n` +
-      `💡 Your answers will be scored automatically!\n\n` +
-      `Ready? Let's go! 🚀`
+      `📝 Total Questions: ${selectedQuestions.length}\n` +
+      `⏱️ Time per Question: ${QUESTION_TIME_LIMIT}s (2 min)\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `� HOW IT WORKS:\n\n` +
+      `  1️⃣ Read the question carefully\n` +
+      `  2️⃣ Choose from 3 options (A, B, C)\n` +
+      `  3️⃣ Get instant feedback\n` +
+      `  4️⃣ Click "Next" when ready\n\n` +
+      `� Your score will be calculated at the end!\n\n` +
+      `Good luck! 🍀`
   );
 
   await showCurrentQuestion(ctx, userId);
@@ -190,6 +193,7 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
   const progress = session.currentQuestionIndex + 1;
   const total = session.questions.length;
   const progressBar = "█".repeat(progress) + "░".repeat(total - progress);
+  const percentage = Math.round((progress / total) * 100);
 
   const difficultyEmoji = {
     easy: "🟢",
@@ -201,30 +205,30 @@ async function showCurrentQuestion(ctx: Context, userId: number) {
   let optionsText = "";
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
-    optionsText += `${label}) ${option}\n\n`;
+    optionsText += `  ${label}) ${option}\n\n`;
   });
 
   // Create inline keyboard with just letter labels
   const keyboard = new InlineKeyboard();
   question.options.forEach((option, index) => {
     const label = String.fromCharCode(65 + index); // A, B, C
-    keyboard.text(`${label}`, `answer_${question.id}_${index}`);
+    keyboard.text(`  ${label}  `, `answer_${question.id}_${index}`);
   });
-  keyboard.row(); // Start new row for navigation
+  keyboard.row().text("🚫 Exit Test", `exit_test_${userId}`);
 
   await ctx.reply(
-    `━━━━━━━━━━━━━━━━━━\n` +
-      `📊 Progress: ${progressBar} ${progress}/${total}\n` +
-      `${
-        difficultyEmoji[question.difficulty]
-      } Difficulty: ${question.difficulty.toUpperCase()}\n` +
-      `⏱️ Time limit: ${session.timeLimit}s\n` +
-      `━━━━━━━━━━━━━━━━━━\n\n` +
-      `❓ QUESTION:\n\n${question.question}\n\n` +
-      `━━━━━━━━━━━━━━━━━━\n\n` +
+    `\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+      `📊 Question ${progress} of ${total}\n` +
+      `${progressBar} ${percentage}%\n` +
+      `${difficultyEmoji[question.difficulty]} ${
+        question.difficulty.charAt(0).toUpperCase() +
+        question.difficulty.slice(1)
+      } | ⏱️ ${session.timeLimit}s\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `❓ ${question.question}\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `${optionsText}` +
-      `━━━━━━━━━━━━━━━━━━\n\n` +
-      `👇 Select your answer:`,
+      `👇 Choose your answer:`,
     { reply_markup: keyboard }
   );
 }
@@ -264,16 +268,16 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
       : "📝";
 
   let resultMessage =
-    `\n${gradeEmoji} TEST COMPLETED! ${gradeEmoji}\n\n` +
+    `\n${gradeEmoji} TEST COMPLETED!\n\n` +
     `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
     `📊 OVERALL PERFORMANCE\n` +
     `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `✅ Correct Answers: ${correctAnswers}/${totalQuestions}\n` +
+    `✅ Correct: ${correctAnswers}/${totalQuestions}\n` +
     `📈 Score: ${percentage}%\n` +
-    `⏱️ Total Time: ${Math.floor(totalTime / 60)}m ${totalTime % 60}s\n` +
-    `⚡ Avg per Question: ${avgTime}s\n\n` +
+    `⏱️ Time: ${Math.floor(totalTime / 60)}m ${totalTime % 60}s\n` +
+    `⚡ Avg: ${avgTime}s/question\n\n` +
     `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-    `📚 PERFORMANCE BY DIFFICULTY\n` +
+    `📚 BY DIFFICULTY\n` +
     `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   Object.entries(byDifficulty).forEach(([level, stats]) => {
@@ -327,29 +331,29 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
   // Performance feedback with tips
   if (percentage >= 90) {
     resultMessage +=
-      `\n🏆 OUTSTANDING!\n` +
-      `You're absolutely crushing it! You have a strong understanding of ${session.topicName}.\n` +
-      `💡 Tip: Challenge yourself with harder topics or teach others!`;
+      `\n🏆 OUTSTANDING!\n\n` +
+      `You're crushing it! Strong mastery of ${session.topicName}.\n\n` +
+      `💡 Next: Challenge yourself with harder topics!`;
   } else if (percentage >= 80) {
     resultMessage +=
-      `\n🥇 EXCELLENT WORK!\n` +
-      `Great performance! You have a solid grasp of ${session.topicName}.\n` +
-      `💡 Tip: Review the questions you missed to reach 90%+!`;
+      `\n🥇 EXCELLENT!\n\n` +
+      `Great job! Solid understanding of ${session.topicName}.\n\n` +
+      `💡 Next: Review missed questions to reach 90%+`;
   } else if (percentage >= 70) {
     resultMessage +=
-      `\n🥈 GOOD JOB!\n` +
-      `You're doing well! Keep practicing ${session.topicName}.\n` +
-      `💡 Tip: Focus on medium and hard difficulty questions.`;
+      `\n🥈 GOOD JOB!\n\n` +
+      `You're doing well! Keep practicing.\n\n` +
+      `💡 Next: Focus on medium/hard questions`;
   } else if (percentage >= 60) {
     resultMessage +=
-      `\n🥉 NOT BAD!\n` +
-      `You're making progress! More practice will help.\n` +
-      `💡 Tip: Review the correct answers and try /topic ${session.topicName} for practice.`;
+      `\n🥉 NICE TRY!\n\n` +
+      `Making progress! More practice will help.\n\n` +
+      `💡 Next: Review answers and practice mode`;
   } else {
     resultMessage +=
-      `\n💪 KEEP LEARNING!\n` +
-      `Everyone starts somewhere! Don't give up.\n` +
-      `💡 Tip: Use /topic ${session.topicName} to study, then retry the interview!`;
+      `\n💪 KEEP GOING!\n\n` +
+      `Everyone starts somewhere!\n\n` +
+      `💡 Next: Use practice mode, then retry`;
   }
 
   resultMessage +=
@@ -366,7 +370,7 @@ async function showTestResults(ctx: Context, session: MockInterviewState) {
 
 export async function handleAnswerSelection(
   ctx: Context,
-  questionId: number,
+  questionId: string,
   selectedOption: number
 ) {
   const userId = ctx.from?.id;
@@ -375,104 +379,68 @@ export async function handleAnswerSelection(
   const session = interviewSessions.get(userId);
   if (!session) {
     await ctx.answerCallbackQuery({
-      text: "No active interview session!",
+      text: "⚠️ Session not found. Please start a new test.",
     });
     return;
   }
-
-  const currentQuestion = session.questions[session.currentQuestionIndex];
 
   // Verify this is the current question
-  if (currentQuestion.id !== questionId) {
+  const currentQuestion = session.questions[session.currentQuestionIndex];
+  if (currentQuestion.id.toString() !== questionId) {
     await ctx.answerCallbackQuery({
-      text: "Please answer the current question!",
+      text: "⚠️ Please answer the current question.",
     });
     return;
   }
 
-  const timeTaken = Math.floor((Date.now() - session.questionStartTime) / 1000);
-
-  // Check if time limit exceeded
-  if (timeTaken > session.timeLimit) {
-    session.results.push({
-      question: currentQuestion,
-      userAnswer: "TIME OUT",
-      isCorrect: false,
-      timeTaken: session.timeLimit,
+  // Check if already answered
+  if (session.answers[session.currentQuestionIndex] !== undefined) {
+    await ctx.answerCallbackQuery({
+      text: "⚠️ You already answered this question!",
     });
-
-    await ctx.answerCallbackQuery();
-
-    const keyboard = new InlineKeyboard().text(
-      "➡️ Next Question",
-      `next_test_question_${userId}`
-    );
-
-    await ctx.reply(
-      `⏰ TIME'S UP!\n\n` +
-        `You exceeded the ${session.timeLimit}s time limit.\n\n` +
-        `━━━━━━━━━━━━━━━━━━\n` +
-        `✅ CORRECT ANSWER:\n\n${
-          currentQuestion.options[currentQuestion.correctOption]
-        }\n` +
-        `━━━━━━━━━━━━━━━━━━`,
-      { reply_markup: keyboard }
-    );
-  } else {
-    // Check if answer is correct
-    const isCorrect = selectedOption === currentQuestion.correctOption;
-    const selectedLabel = String.fromCharCode(65 + selectedOption);
-    const correctLabel = String.fromCharCode(
-      65 + currentQuestion.correctOption
-    );
-
-    session.results.push({
-      question: currentQuestion,
-      userAnswer: `${selectedLabel}) ${currentQuestion.options[selectedOption]}`,
-      isCorrect,
-      timeTaken,
-    });
-
-    await ctx.answerCallbackQuery();
-
-    if (isCorrect) {
-      const encouragement = getEncouragement(true);
-      const keyboard = new InlineKeyboard().text(
-        "➡️ Next Question",
-        `next_test_question_${userId}`
-      );
-
-      await ctx.reply(
-        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
-          `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
-          `━━━━━━━━━━━━━━━━━━`,
-        { reply_markup: keyboard }
-      );
-    } else {
-      const encouragement = getEncouragement(false);
-      const keyboard = new InlineKeyboard().text(
-        "➡️ Next Question",
-        `next_test_question_${userId}`
-      );
-
-      await ctx.reply(
-        `${encouragement} ⏱️ ${timeTaken}s\n\n` +
-          `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `✅ CORRECT ANSWER:\n\n${correctLabel}) ${
-            currentQuestion.options[currentQuestion.correctOption]
-          }\n\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `📖 EXPLANATION:\n\n${currentQuestion.answer}\n` +
-          `━━━━━━━━━━━━━━━━━━`,
-        { reply_markup: keyboard }
-      );
-    }
+    return;
   }
-}
 
+  // Record answer
+  session.answers[session.currentQuestionIndex] = selectedOption;
+
+  // Check if correct
+  const isCorrect = selectedOption === currentQuestion.correctOption;
+  if (isCorrect) {
+    session.correctAnswers++;
+  }
+
+  // Prepare feedback message
+  const selectedLabel = String.fromCharCode(65 + selectedOption);
+  const correctLabel = String.fromCharCode(65 + currentQuestion.correctOption);
+  const correctAnswer = currentQuestion.options[currentQuestion.correctOption];
+
+  let feedbackMessage = "";
+  if (isCorrect) {
+    feedbackMessage =
+      `✅ Correct!\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n\n` +
+      `� Explanation:\n${currentQuestion.answer}`;
+  } else {
+    feedbackMessage =
+      `❌ Incorrect\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `Your answer: ${selectedLabel}) ${currentQuestion.options[selectedOption]}\n\n` +
+      `✓ Correct answer: ${correctLabel}) ${correctAnswer}\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `� Explanation:\n${currentQuestion.answer}`;
+  }
+
+  // Send feedback with Next Question button
+  const keyboard = new InlineKeyboard().text(
+    "➡️ Next Question",
+    `next_test_question_${userId}`
+  );
+
+  await ctx.reply(feedbackMessage, { reply_markup: keyboard });
+  await ctx.answerCallbackQuery();
+}
 export async function handleNextQuestion(ctx: Context, userId: number) {
   const session = interviewSessions.get(userId);
   if (!session) {

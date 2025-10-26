@@ -30,4 +30,6 @@ export interface MockInterviewState {
   startTime: number;
   questionStartTime: number;
   timeLimit: number; // seconds per question
+  answers: number[]; // Track selected option indices
+  correctAnswers: number; // Count of correct answers
 }

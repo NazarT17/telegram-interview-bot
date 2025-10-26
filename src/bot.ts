@@ -41,8 +41,11 @@ bot.callbackQuery("practice_mode", async (ctx) => {
   keyboard.text("🔙 Back", "back_to_start");
 
   await ctx.editMessageText(
-    "🎓 Practice Mode\n\n" +
-      "Select a topic to get a random question with instant answer:",
+    "🎓 PRACTICE MODE\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+      "Select a topic to get random questions\n" +
+      "with instant feedback:\n\n" +
+      "👇 Choose a topic:",
     { reply_markup: keyboard }
   );
 });
@@ -58,8 +61,13 @@ bot.callbackQuery("test_mode", async (ctx) => {
   keyboard.text("🔙 Back", "back_to_start");
 
   await ctx.editMessageText(
-    "🔥 Test Mode\n\n" +
-      "Select a topic for a timed mock interview with scoring:",
+    "🔥 TEST MODE\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+      "Take a timed mock interview:\n" +
+      "• 5 questions per test\n" +
+      "• 2 minutes per question\n" +
+      "• Final score & breakdown\n\n" +
+      "👇 Choose a topic:",
     { reply_markup: keyboard }
   );
 });
@@ -229,7 +237,7 @@ bot.callbackQuery(/^test_(.+)$/, async (ctx) => {
 
 // Handle answer selection in mock interviews
 bot.callbackQuery(/^answer_(\d+)_(\d+)$/, async (ctx) => {
-  const questionId = parseInt(ctx.match[1]);
+  const questionId = ctx.match[1];
   const selectedOption = parseInt(ctx.match[2]);
 
   await handleAnswerSelection(ctx, questionId, selectedOption);
@@ -240,6 +248,26 @@ bot.callbackQuery(/^next_test_question_(\d+)$/, async (ctx) => {
   const userId = parseInt(ctx.match[1]);
 
   await handleNextQuestion(ctx, userId);
+});
+
+// Handle exit test button
+bot.callbackQuery(/^exit_test_(\d+)$/, async (ctx) => {
+  const userId = parseInt(ctx.match[1]);
+
+  await ctx.answerCallbackQuery({ text: "Test cancelled" });
+
+  const keyboard = new InlineKeyboard().text(
+    "🔙 Back to Home",
+    "back_to_start"
+  );
+
+  await ctx.reply(
+    "🚫 TEST CANCELLED\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+      "No worries! You can start a new test anytime.\n\n" +
+      "💡 Tip: Use practice mode to warm up first!",
+    { reply_markup: keyboard }
+  );
 });
 
 bot.catch((err) => {

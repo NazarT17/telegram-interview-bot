@@ -8,32 +8,40 @@ export async function startCommand(ctx: CommandContext<Context>) {
   const message = `
 👋 Welcome to Interview Prep Bot!
 
-🎯 Your personal interview coach is ready to help you ace your next technical interview!
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📚 Available Topics:
+Your personal coach for acing technical interviews!
+
+📚 AVAILABLE TOPICS:
+
 ${topicList}
 
-� What would you like to do?
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🎓 Practice Mode:
-/topic <name> - Get a random question with instant answer
-   Example: /topic typescript
+🎯 CHOOSE YOUR MODE:
 
-🔥 Test Mode:
-/mockinterview <topic> - Take a timed test with scoring
-   Example: /mockinterview playwright
+🎓 Practice Mode
+   Learn with instant feedback
+   → /topic <name>
 
-📋 Browse:
-/topics - View all topics with question counts
+🔥 Test Mode
+   Timed questions with scoring
+   → /mockinterview <topic>
 
-💡 Tip: Start with practice mode to learn, then test yourself with mock interviews!
+📋 Browse Topics
+   See all questions available
+   → /topics
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Pro Tip: Practice first, then test yourself!
   `;
 
   const keyboard = new InlineKeyboard()
-    .text("🎓 Practice Mode", "practice_mode")
-    .text("🔥 Test Mode", "test_mode")
+    .text("🎓 Practice", "practice_mode")
+    .text("🔥 Test", "test_mode")
     .row()
-    .text("📚 View Topics", "view_topics")
+    .text("📚 Topics", "view_topics")
     .text("ℹ️ Help", "show_help");
 
   await ctx.reply(message, { reply_markup: keyboard });
